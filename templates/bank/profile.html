@@ -1,0 +1,318 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}
+
+<style>
+
+    .profile-container {
+        max-width: 950px;
+        margin: 30px auto;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #0b3d91, #1261c9);
+        color: white;
+        padding: 25px 30px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .profile-header h2 {
+        margin: 0 0 6px;
+        font-size: 25px;
+    }
+
+    .profile-header p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .profile-card {
+        background: white;
+        padding: 30px;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .details-title {
+        color: #172b4d;
+        margin-bottom: 20px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .detail-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+    .detail-box.full {
+        grid-column: 1 / 3;
+    }
+
+    .label {
+        color: #667085;
+        font-size: 12px;
+        margin-bottom: 7px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .value {
+        color: #172b4d;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 15px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #166534;
+        font-size: 13px;
+    }
+
+    .license-link {
+        color: #1261c9;
+        text-decoration: none;
+    }
+
+    .actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 11px 20px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .edit-btn {
+        background: #1261c9;
+        color: white;
+    }
+
+    .back-btn {
+        background: #e5e7eb;
+        color: #344054;
+    }
+
+    @media (max-width: 650px) {
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-box.full {
+            grid-column: auto;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
+<div class="profile-container">
+
+
+    <div class="profile-header">
+
+        <h2>
+            {{ bank.bank_name }}
+        </h2>
+
+        <p>
+            Bank Profile
+        </p>
+
+    </div>
+
+
+    <div class="profile-card">
+
+
+        <h3 class="details-title">
+            Bank Information
+        </h3>
+
+
+        <div class="details-grid">
+
+
+            <div class="detail-box">
+
+                <div class="label">
+                    Bank Name
+                </div>
+
+                <div class="value">
+                    {{ bank.bank_name }}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="label">
+                    Bank Code
+                </div>
+
+                <div class="value">
+                    {{ bank.bank_code }}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="label">
+                    IFSC Code
+                </div>
+
+                <div class="value">
+                    {{ bank.ifsc_code }}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="label">
+                    Email
+                </div>
+
+                <div class="value">
+                    {{ bank.email }}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="label">
+                    Phone
+                </div>
+
+                <div class="value">
+                    {{ bank.phone }}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <div class="label">
+                    Status
+                </div>
+
+                <div class="value">
+
+                    {% if bank.status == "Approved" %}
+
+                        <span class="status">
+                            Approved
+                        </span>
+
+                    {% elif bank.status == "Pending" %}
+
+                        <span class="status">
+                            Pending
+                        </span>
+
+                    {% else %}
+
+                        <span class="status">
+                            {{ bank.status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="detail-box full">
+
+                <div class="label">
+                    Address
+                </div>
+
+                <div class="value">
+                    {{ bank.address }}
+                </div>
+
+            </div>
+
+
+            <div class="detail-box full">
+
+                <div class="label">
+                    License Document
+                </div>
+
+                <div class="value">
+
+                    {% if bank.license_doc %}
+
+                        <a
+                            href="{{ bank.license_doc.url }}"
+                            target="_blank"
+                            class="license-link"
+                        >
+                            View License Document
+                        </a>
+
+                    {% else %}
+
+                        No License Document
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="actions">
+
+            <a
+                href="{% url 'edit_profile' %}"
+                class="btn edit-btn"
+            >
+                Edit Profile
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

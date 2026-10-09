@@ -1,0 +1,297 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}
+
+<style>
+.cu{--blue-l:#e9f5fd;--blue-m:#bfe0f7;--blue:#2b8fd6;--blue-d:#1d6aa5;--green-l:#e3f7ec;--green-m:#a9e5c3;--green:#2e9e6b;--red:#c0392b;--red-l:#fdecea;--ink:#16324a;--muted:#5d7388;--line:#dbe9f2;color:var(--ink);max-width:880px;margin:26px auto;padding:0 16px}
+.cu *{box-sizing:border-box}
+.cu-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px;box-shadow:0 10px 30px rgba(29,106,165,.08)}
+.cu-title{font-size:1.65rem;font-weight:800;letter-spacing:-.01em}
+.cu-sub{color:var(--muted);margin:4px 0 24px;font-size:.95rem}
+
+/* stepper */
+.cu-steps{display:flex;list-style:none;margin:0 0 28px;padding:0}
+.cu-steps li{flex:1;display:flex;align-items:center;gap:12px;position:relative;font-weight:700;font-size:.92rem;color:var(--muted)}
+.cu-steps li+li{padding-left:0}
+.cu-steps li:not(:last-child)::after{content:"";flex:1;height:3px;border-radius:3px;background:var(--line);margin:0 14px}
+.cu-steps li:not(:last-child).is-done::after{background:linear-gradient(90deg,var(--green),var(--green))}
+.cu-steps b{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);background:#fff;color:var(--muted);flex:none;transition:.3s}
+.cu-steps small{display:block;font-weight:600;font-size:.76rem;color:var(--muted)}
+.cu-steps li.is-active{color:var(--ink)}
+.cu-steps li.is-active b{background:var(--blue-d);border-color:var(--blue-d);color:#fff;box-shadow:0 0 0 5px rgba(43,143,214,.18)}
+.cu-steps li.is-done b{background:var(--green);border-color:var(--green);color:#fff}
+
+/* flash */
+.cu-flash{padding:12px 16px;border-radius:12px;margin-bottom:18px;font-size:.92rem;background:var(--blue-l);color:var(--blue-d);border:1px solid var(--blue-m)}
+.cu-flash.error{background:var(--red-l);color:var(--red);border-color:#f3c3be}
+.cu-flash.success{background:var(--green-l);color:#17724b;border-color:var(--green-m)}
+.cu-summary{padding:12px 16px;border-radius:12px;margin-bottom:18px;font-size:.92rem;background:#fff4dc;color:#b7791f;border:1px solid #f4dba5}
+
+/* panels */
+.cu-panel{animation:cuIn .35s}
+@keyframes cuIn{from{opacity:0;transform:translateX(18px)}}
+.cu-panel[hidden]{display:none}
+.cu-h{font-size:1.05rem;font-weight:800;margin:0 0 4px}
+.cu-hs{color:var(--muted);font-size:.86rem;margin:0 0 18px}
+.cu-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cu-f{display:flex;flex-direction:column;min-width:0}
+.cu-f.full{grid-column:1/-1}
+.cu label{font-size:.86rem;font-weight:700;margin-bottom:6px}
+.cu .req{color:var(--red)}
+.cu input,.cu select,.cu textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:.95rem;color:var(--ink);background:#fff;outline:0;transition:border-color .2s,box-shadow .2s}
+.cu textarea{min-height:100px;resize:vertical}
+.cu input:focus,.cu select:focus,.cu textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(43,143,214,.15)}
+.cu .input-error{border-color:var(--red)!important;background:#fffafa}
+.cu .input-success{border-color:var(--green)!important}
+.cu input[type=file]{padding:9px 12px;border-style:dashed;border-color:var(--blue-m);background:var(--blue-l);font-size:.88rem}
+.cu input[type=file]::file-selector-button{margin-right:10px;border:0;border-radius:8px;padding:7px 13px;background:var(--blue-d);color:#fff;font-weight:700;cursor:pointer}
+.cu-err{display:none;color:var(--red);font-size:.8rem;margin-top:5px}
+.cu-err.show{display:block}
+.cu-help{color:#7d92a4;font-size:.78rem;margin-top:5px}
+
+.cu-info{margin-top:22px;padding:14px 18px;border-radius:14px;background:linear-gradient(120deg,var(--blue-l),var(--green-l));border:1px solid var(--line);font-size:.88rem;line-height:1.6}
+.cu-info b{color:var(--ink)}
+
+/* review card on step 2 */
+.cu-review{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:22px;background:#f9fcfe}
+.cu-review h3{margin:0 0 10px;font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;color:var(--blue-d)}
+.cu-review dl{margin:0;display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:.9rem}
+.cu-review dt{color:var(--muted);font-weight:600}
+.cu-review dd{margin:0;word-break:break-word}
+.cu-edit{background:none;border:0;color:var(--blue-d);font-weight:700;cursor:pointer;padding:0;margin-top:10px;font-size:.85rem}
+
+/* buttons */
+.cu-actions{margin-top:28px;display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap}
+.cu-btn{padding:12px 26px;border:0;border-radius:12px;font-size:.95rem;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .2s}
+.cu-btn:hover{transform:translateY(-2px)}
+.cu-next,.cu-save{background:var(--blue-d);color:#fff;box-shadow:0 8px 20px rgba(29,106,165,.22)}
+.cu-save{background:var(--green);box-shadow:0 8px 20px rgba(46,158,107,.25)}
+.cu-ghost{background:var(--blue-l);color:var(--blue-d)}
+.cu-btn:disabled{opacity:.7;cursor:wait;transform:none}
+.cu-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+@media(max-width:700px){
+  .cu-card{padding:20px}
+  .cu-grid{grid-template-columns:1fr}
+  .cu-f.full{grid-column:auto}
+  .cu-steps li small{display:none}
+  .cu-actions{flex-direction:column-reverse}
+  .cu-btn{text-align:center;width:100%}
+  .cu-review dl{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.cu *{animation:none!important;transition:none!important}}
+</style>
+
+<div class="cu">
+  <div class="cu-card">
+
+    <div class="cu-title">Create User Account</div>
+    <div class="cu-sub">Create a new customer profile and bank account in two quick steps.</div>
+
+    <!-- STEP INDICATOR -->
+    <ol class="cu-steps" id="cuSteps" aria-label="Progress">
+      <li class="is-active" data-s="1" aria-current="step"><b>1</b><span>Customer details<small>Name, contact and address</small></span></li>
+      <li data-s="2"><b>2</b><span>Bank account<small>Number, type and balance</small></span></li>
+    </ol>
+
+    {% for m in messages %}<div class="cu-flash {{ m.tags }}" role="alert">{{ m }}</div>{% endfor %}
+    <div class="cu-summary" id="cuSummary" role="alert" hidden></div>
+
+    <form method="POST" enctype="multipart/form-data" id="createUserForm">
+      {% csrf_token %}
+
+      <!-- ================= STEP 1: CUSTOMER DETAILS ================= -->
+      <section class="cu-panel" id="step1" data-step="1">
+        <h2 class="cu-h">Customer details</h2>
+        <p class="cu-hs">Enter the customer's personal information.</p>
+
+        <div class="cu-grid">
+          <div class="cu-f">
+            <label for="full_name">Full Name <span class="req">*</span></label>
+            <input type="text" name="full_name" id="full_name" placeholder="Enter full name" maxlength="200" value="{{ request.POST.full_name }}" required>
+            <span class="cu-err" id="full_name_error">Enter a valid name (letters, spaces and dots, at least 3 characters).</span>
+          </div>
+
+          <div class="cu-f">
+            <label for="email">Email <span class="req">*</span></label>
+            <input type="email" name="email" id="email" placeholder="Enter email address" maxlength="254" value="{{ request.POST.email }}" required>
+            <span class="cu-err" id="email_error">Enter a valid email address.</span>
+          </div>
+
+          <div class="cu-f">
+            <label for="phone">Phone Number <span class="req">*</span></label>
+            <input type="tel" name="phone" id="phone" placeholder="Enter 10 digit phone number" maxlength="10" minlength="10" pattern="[0-9]{10}" inputmode="numeric" value="{{ request.POST.phone }}" required>
+            <span class="cu-err" id="phone_error">Phone number must contain exactly 10 digits.</span>
+          </div>
+
+          <div class="cu-f">
+            <label for="profile_pic">Profile Picture</label>
+            <input type="file" name="profile_pic" id="profile_pic" accept=".jpg,.jpeg,.png">
+            <span class="cu-help">Optional. JPG or PNG, below 2 MB.</span>
+            <span class="cu-err" id="profile_pic_error">Select a JPG, JPEG or PNG image below 2 MB.</span>
+          </div>
+
+          <div class="cu-f full">
+            <label for="address">Address <span class="req">*</span></label>
+            <textarea name="address" id="address" placeholder="Enter customer address" minlength="10" maxlength="500" required>{{ request.POST.address }}</textarea>
+            <span class="cu-err" id="address_error">Address must contain at least 10 characters.</span>
+          </div>
+        </div>
+
+        <div class="cu-info">
+          <b>Login for this customer</b><br>
+          <b>Username:</b> the customer's email address &nbsp;·&nbsp; <b>Initial password:</b> the customer's phone number<br>
+          The customer can use these details for the first login.
+        </div>
+
+        <div class="cu-actions">
+          <a href="{% url 'view_bank_users' %}" class="cu-btn cu-ghost">Cancel</a>
+          <button type="button" class="cu-btn cu-next" id="nextBtn">Next: Bank details &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ================= STEP 2: BANK ACCOUNT DETAILS ================= -->
+      <section class="cu-panel" id="step2" data-step="2" hidden>
+        <h2 class="cu-h">Bank account details</h2>
+        <p class="cu-hs">Set up the account for this customer.</p>
+
+        <div class="cu-review" aria-label="Customer summary">
+          <h3>Customer</h3>
+          <dl>
+            <dt>Full name</dt><dd id="r_name"></dd>
+            <dt>Email (username)</dt><dd id="r_email"></dd>
+            <dt>Phone</dt><dd id="r_phone"></dd>
+            <dt>Address</dt><dd id="r_address"></dd>
+          </dl>
+          <button type="button" class="cu-edit" id="editBtn">&larr; Edit customer details</button>
+        </div>
+
+        <div class="cu-grid">
+          <div class="cu-f">
+            <label for="account_number">Account Number <span class="req">*</span></label>
+            <input type="text" name="account_number" id="account_number" placeholder="Enter account number" minlength="8" maxlength="20" pattern="[0-9]{8,20}" inputmode="numeric" value="{{ request.POST.account_number }}" required>
+            <span class="cu-err" id="account_number_error">Account number must contain 8 to 20 digits.</span>
+          </div>
+
+          <div class="cu-f">
+            <label for="account_type">Account Type <span class="req">*</span></label>
+            <select name="account_type" id="account_type" required>
+              <option value="">Select Account Type</option>
+              <option value="Savings" {% if request.POST.account_type == 'Savings' %}selected{% endif %}>Savings</option>
+              <option value="Current" {% if request.POST.account_type == 'Current' %}selected{% endif %}>Current</option>
+            </select>
+            <span class="cu-err" id="account_type_error">Please select an account type.</span>
+          </div>
+
+          <div class="cu-f">
+            <label for="balance">Initial Balance (₹) <span class="req">*</span></label>
+            <input type="number" name="balance" id="balance" value="{{ request.POST.balance|default:'0.00' }}" min="0" max="999999999999.99" step="0.01" required>
+            <span class="cu-err" id="balance_error">Balance cannot be negative.</span>
+          </div>
+        </div>
+
+        <div class="cu-actions">
+          <button type="button" class="cu-btn cu-ghost" id="backBtn">&larr; Back</button>
+          <button type="submit" class="cu-btn cu-save" id="saveBtn">Create User &amp; Account</button>
+        </div>
+      </section>
+
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  var form=document.getElementById('createUserForm'),sum=document.getElementById('cuSummary');
+  form.noValidate=true; /* without JavaScript the browser's own checks still run */
+  var STEP1=['full_name','email','phone','profile_pic','address'],STEP2=['account_number','account_type','balance'];
+
+  var rules={
+    full_name:function(v){return v.length>=3&&/^[A-Za-z\s.]+$/.test(v)},
+    email:function(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+    phone:function(v){return /^[0-9]{10}$/.test(v)},
+    profile_pic:function(v,el){
+      var f=el.files[0];if(!f)return true;
+      return /^image\/(jpeg|jpg|png)$/.test(f.type)&&f.size<=2*1024*1024},
+    address:function(v){return v.length>=10},
+    account_number:function(v){return /^[0-9]{8,20}$/.test(v)},
+    account_type:function(v){return v!==''},
+    balance:function(v){var n=parseFloat(v);return !isNaN(n)&&n>=0}
+  };
+
+  function check(name,show){
+    var el=form.elements[name],v=el.value;
+    if(el.type!=='file'&&el.tagName!=='SELECT')v=v.trim();
+    var ok=rules[name](v,el),err=document.getElementById(name+'_error');
+    if(show){
+      el.classList.toggle('input-error',!ok);
+      el.classList.toggle('input-success',ok&&(v!==''||el.type==='file'&&el.files.length));
+      err.classList.toggle('show',!ok);
+      el.setAttribute('aria-invalid',ok?'false':'true');
+    }
+    return ok;
+  }
+
+  /* live validation */
+  Object.keys(rules).forEach(function(n){
+    var el=form.elements[n],evt=(el.type==='file'||el.tagName==='SELECT')?'change':'input';
+    el.addEventListener(evt,function(){
+      if(n==='phone'||n==='account_number')el.value=el.value.replace(/[^0-9]/g,'');
+      if(!check(n,true)&&el.type==='file')el.value='';
+    });
+    el.addEventListener('blur',function(){if(el.value||el.type!=='file')check(n,true)});
+  });
+
+  function validateStep(list){
+    var first=null,bad=0;
+    list.forEach(function(n){if(!check(n,true)){bad++;if(!first)first=form.elements[n]}});
+    if(bad){
+      sum.hidden=false;sum.textContent='Please correct the '+bad+' highlighted field'+(bad>1?'s':'')+' before continuing.';
+      first.focus();
+    }else sum.hidden=true;
+    return !bad;
+  }
+
+  /* step switching */
+  var p1=document.getElementById('step1'),p2=document.getElementById('step2'),dots=document.querySelectorAll('#cuSteps li');
+  function show(n){
+    p1.hidden=n!==1;p2.hidden=n!==2;
+    dots.forEach(function(d){
+      var s=+d.dataset.s;
+      d.classList.toggle('is-active',s===n);d.classList.toggle('is-done',s<n);
+      d.querySelector('b').textContent=s<n?'✔':s;
+      if(s===n)d.setAttribute('aria-current','step');else d.removeAttribute('aria-current');
+    });
+    sum.hidden=true;
+    document.querySelector('.cu').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(function(){(n===1?form.full_name:form.account_number).focus({preventScroll:true})},250);
+  }
+
+  function fillReview(){
+    document.getElementById('r_name').textContent=form.full_name.value.trim();
+    document.getElementById('r_email').textContent=form.email.value.trim();
+    document.getElementById('r_phone').textContent=form.phone.value;
+    document.getElementById('r_address').textContent=form.address.value.trim();
+  }
+
+  document.getElementById('nextBtn').addEventListener('click',function(){
+    if(validateStep(STEP1)){fillReview();show(2)}
+  });
+  document.getElementById('backBtn').addEventListener('click',function(){show(1)});
+  document.getElementById('editBtn').addEventListener('click',function(){show(1)});
+
+  /* Enter on step 1 goes to Next instead of submitting */
+  p1.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();document.getElementById('nextBtn').click()}
+  });
+
+  /* final submit */
+  form.addEventListener('submit',function(e){
+    if(!validateStep(STEP1)){e.preventDefault();show(1);validateStep(STEP1);return}
+    if(!validateStep(STEP2)){e.preventDefault();return}
+    var b=document.getElementById('saveBtn');b.disabled=true;b.textContent='Creating…';
+  });
+})();
+</script>
+
+{% endblock %}

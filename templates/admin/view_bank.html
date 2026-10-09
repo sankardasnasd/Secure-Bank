@@ -1,0 +1,231 @@
+{% extends 'admin/home sub.html' %}
+{% block body %}<html>
+<head>
+
+    <title>Bank Details</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .container {
+            width: 70%;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .label {
+            width: 200px;
+            font-weight: bold;
+        }
+
+        .value {
+            flex: 1;
+        }
+
+        .status {
+            padding: 7px 15px;
+            border-radius: 20px;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .approve {
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .reject {
+            background: #dc3545;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .back {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .approve:hover {
+            background: #218838;
+        }
+
+        .reject:hover {
+            background: #c82333;
+        }
+
+        .back:hover {
+            background: #545b62;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Bank Details</h1>
+
+        <div class="row">
+            <div class="label">Bank Name</div>
+            <div class="value">{{ bank.bank_name }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Bank Code</div>
+            <div class="value">{{ bank.bank_code }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">IFSC Code</div>
+            <div class="value">{{ bank.ifsc_code }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Email</div>
+            <div class="value">{{ bank.email }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Phone</div>
+            <div class="value">{{ bank.phone }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Address</div>
+            <div class="value">{{ bank.address }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">License Document</div>
+
+            <div class="value">
+
+                {% if bank.license_doc %}
+                    <a href="{{ bank.license_doc.url }}" target="_blank">
+                        View License Document
+                    </a>
+                {% else %}
+                    No document uploaded
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="label">Status</div>
+
+            <div class="value">
+
+                {% if bank.status == "Pending" %}
+                    <span class="status pending">Pending</span>
+
+                {% elif bank.status == "Approved" %}
+                    <span class="status approved">Approved</span>
+
+                {% elif bank.status == "Rejected" %}
+                    <span class="status rejected">Rejected</span>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% if bank.status == "Pending" %}
+
+        <div class="buttons">
+
+            <a href="{% url 'approve_bank' bank.id %}"
+               class="approve"
+               onclick="return confirm('Are you sure you want to approve this bank?');">
+                Approve
+            </a>
+
+            <a href="{% url 'reject_bank' bank.id %}"
+               class="reject"
+               onclick="return confirm('Are you sure you want to reject this bank?');">
+                Reject
+            </a>
+
+            <a href="{% url 'manage_banks' %}"
+               class="back">
+                Back
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="buttons">
+
+            <a href="{% url 'manage_banks' %}"
+               class="back">
+                Back
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
+
+{% endblock %}

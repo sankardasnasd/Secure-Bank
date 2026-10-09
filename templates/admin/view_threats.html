@@ -1,0 +1,533 @@
+{% extends 'admin/home sub.html' %}
+
+{% block body %}
+<style>
+    .threats-container {
+        width: 94%;
+        max-width: 1400px;
+        margin: 30px auto 50px;
+        font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    }
+
+    .threats-container h1 {
+        margin-bottom: 28px;
+        font-size: 1.8rem;
+        color: #1a1a1a;
+    }
+
+    .card {
+        background: #fff;
+        padding: 24px;
+        margin-bottom: 28px;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        border: 1px solid #e9ecef;
+    }
+
+    .card h2 {
+        margin: 0 0 18px 0;
+        font-size: 1.25rem;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        font-size: 0.92rem;
+    }
+
+    th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+        white-space: nowrap;
+    }
+
+    tr:hover {
+        background: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .badge-danger    { background: #f8d7da; color: #721c24; }
+    .badge-warning   { background: #fff3cd; color: #856404; }
+    .badge-success   { background: #d4edda; color: #155724; }
+    .badge-secondary { background: #e2e3e5; color: #383d41; }
+
+    .btn-view {
+        background: #0d6efd;
+        color: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .btn-view:hover { background: #0b5ed7; }
+
+    .url-cell, .hash-cell {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1050;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .modal-overlay.show {
+        display: flex;
+    }
+    .modal-box {
+        background: white;
+        border-radius: 14px;
+        width: 100%;
+        max-width: 560px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        animation: modalIn 0.22s ease;
+    }
+    @keyframes modalIn {
+        from { opacity: 0; transform: translateY(20px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+        padding: 18px 22px;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.15rem;
+    }
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        color: #6c757d;
+        padding: 0 4px;
+    }
+    .modal-close:hover { color: #000; }
+    .modal-body {
+        padding: 20px 22px 26px;
+    }
+    .detail-row {
+        display: flex;
+        margin-bottom: 12px;
+        gap: 12px;
+    }
+    .detail-label {
+        min-width: 130px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+    }
+    .detail-value {
+        flex: 1;
+        word-break: break-all;
+        font-size: 0.9rem;
+        color: #212529;
+    }
+    .empty-msg {
+        text-align: center;
+        color: #6c757d;
+        padding: 20px;
+    }
+</style>
+
+<div class="threats-container">
+
+    <h1>Security Threats</h1>
+
+    <!-- ==================== PHISHING ==================== -->
+    <div class="card">
+        <h2>Phishing Threats</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Prediction</th>
+                        <th>Risk Level</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in phishing_logs %}
+                    <tr>
+                        <td class="url-cell" title="{{ log.url }}">{{ log.url }}</td>
+                        <td>
+                            {% if log.prediction == "Phishing" %}
+                                <span class="badge badge-danger">Phishing</span>
+                            {% else %}
+                                <span class="badge badge-success">Safe</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.risk_level }}</td>
+                        <td>{{ log.status }}</td>
+                        <td>{{ log.created_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            <button class="btn-view"
+                                onclick="openPhishingModal(
+                                    '{{ log.url|escapejs }}',
+                                    '{{ log.prediction }}',
+                                    '{{ log.risk_level }}',
+                                    '{{ log.status }}',
+                                    '{{ log.created_at|date:"d M Y, H:i" }}',
+                                    '{% if log.reported_by %}{{ log.reported_by.username|escapejs }}{% else %}-{% endif %}'
+                                )">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-msg">No phishing threats found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== MALWARE ==================== -->
+    <div class="card">
+        <h2>Malware Threats</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>APK File</th>
+                        <th>File Hash</th>
+                        <th>Result</th>
+                        <th>Confidence</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in malware_logs %}
+                    <tr>
+                        <td title="{{ log.apk_file.name }}">{{ log.apk_file.name|default:"-" }}</td>
+                        <td class="hash-cell" title="{{ log.file_hash }}">{{ log.file_hash|default:"-" }}</td>
+                        <td>
+                            {% if log.scan_result == "Malicious" %}
+                                <span class="badge badge-danger">Malicious</span>
+                            {% elif log.scan_result == "Suspicious" %}
+                                <span class="badge badge-warning">Suspicious</span>
+                            {% else %}
+                                <span class="badge badge-success">Clean</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.confidence_score }}</td>
+                        <td>{{ log.created_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            <button class="btn-view"
+                                onclick="openMalwareModal(
+                                    '{{ log.apk_file.name|default:"-"|escapejs }}',
+                                    '{{ log.file_hash|default:"-"|escapejs }}',
+                                    '{{ log.scan_result }}',
+                                    '{{ log.confidence_score|escapejs }}',
+                                    '{{ log.reason|default:"-"|escapejs }}',
+                                    '{{ log.prediction_result|default:"-"|escapejs }}',
+                                    '{{ log.status }}',
+                                    '{{ log.created_at|date:"d M Y, H:i" }}',
+                                    '{% if log.uploaded_by %}{{ log.uploaded_by.username|escapejs }}{% else %}-{% endif %}'
+                                )">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-msg">No malware threats found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================== NETWORK ==================== -->
+    <div class="card">
+        <h2>Network Threats</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>Route</th>
+                        <th>Requests</th>
+                        <th>Action</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in network_logs %}
+                    <tr>
+                        <td>{{ log.client_ip }}</td>
+                        <td class="url-cell" title="{{ log.route }}">{{ log.route }}</td>
+                        <td>{{ log.request_count }}</td>
+                        <td>{{ log.action_taken }}</td>
+                        <td>
+                            {% if log.status == "DDoS Detected" %}
+                                <span class="badge badge-danger">DDoS Detected</span>
+                            {% elif log.status == "Suspicious" %}
+                                <span class="badge badge-warning">Suspicious</span>
+                            {% elif log.status == "Normal" %}
+                                <span class="badge badge-success">Normal</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ log.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.created_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            <button class="btn-view"
+                                onclick="openNetworkModal(
+                                    '{{ log.client_ip }}',
+                                    '{{ log.route|escapejs }}',
+                                    '{{ log.request_count }}',
+                                    '{{ log.action_taken }}',
+                                    '{{ log.status }}',
+                                    '{{ log.created_at|date:"d M Y, H:i" }}',
+                                    '{% if log.user %}{{ log.user|escapejs }}{% else %}-{% endif %}'
+                                )">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-msg">No network threats found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Phishing Modal -->
+<div class="modal-overlay" id="phishingModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Phishing Threat Details</h3>
+            <button class="modal-close" onclick="closeModal('phishingModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-row">
+                <span class="detail-label">URL</span>
+                <span class="detail-value" id="ph-url"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Prediction</span>
+                <span class="detail-value" id="ph-prediction"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Risk Level</span>
+                <span class="detail-value" id="ph-risk"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value" id="ph-status"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Reported By</span>
+                <span class="detail-value" id="ph-reported"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value" id="ph-date"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Malware Modal -->
+<div class="modal-overlay" id="malwareModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Malware Scan Details</h3>
+            <button class="modal-close" onclick="closeModal('malwareModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-row">
+                <span class="detail-label">APK File</span>
+                <span class="detail-value" id="mw-file"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">File Hash</span>
+                <span class="detail-value" id="mw-hash"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Scan Result</span>
+                <span class="detail-value" id="mw-result"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Confidence</span>
+                <span class="detail-value" id="mw-confidence"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Reason</span>
+                <span class="detail-value" id="mw-reason"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Prediction</span>
+                <span class="detail-value" id="mw-prediction"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value" id="mw-status"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Uploaded By</span>
+                <span class="detail-value" id="mw-uploaded"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value" id="mw-date"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Network Modal -->
+<div class="modal-overlay" id="networkModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Network Threat Details</h3>
+            <button class="modal-close" onclick="closeModal('networkModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-row">
+                <span class="detail-label">IP Address</span>
+                <span class="detail-value" id="nw-ip"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Route</span>
+                <span class="detail-value" id="nw-route"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Request Count</span>
+                <span class="detail-value" id="nw-count"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Action Taken</span>
+                <span class="detail-value" id="nw-action"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value" id="nw-status"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">User</span>
+                <span class="detail-value" id="nw-user"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value" id="nw-date"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPhishingModal(url, prediction, risk, status, date, reported) {
+        document.getElementById('ph-url').textContent = url;
+        document.getElementById('ph-prediction').textContent = prediction;
+        document.getElementById('ph-risk').textContent = risk;
+        document.getElementById('ph-status').textContent = status;
+        document.getElementById('ph-date').textContent = date;
+        document.getElementById('ph-reported').textContent = reported;
+        document.getElementById('phishingModal').classList.add('show');
+    }
+
+    function openMalwareModal(file, hash, result, confidence, reason, prediction, status, date, uploaded) {
+        document.getElementById('mw-file').textContent = file;
+        document.getElementById('mw-hash').textContent = hash;
+        document.getElementById('mw-result').textContent = result;
+        document.getElementById('mw-confidence').textContent = confidence;
+        document.getElementById('mw-reason').textContent = reason;
+        document.getElementById('mw-prediction').textContent = prediction;
+        document.getElementById('mw-status').textContent = status;
+        document.getElementById('mw-date').textContent = date;
+        document.getElementById('mw-uploaded').textContent = uploaded;
+        document.getElementById('malwareModal').classList.add('show');
+    }
+
+    function openNetworkModal(ip, route, count, action, status, date, user) {
+        document.getElementById('nw-ip').textContent = ip;
+        document.getElementById('nw-route').textContent = route;
+        document.getElementById('nw-count').textContent = count;
+        document.getElementById('nw-action').textContent = action;
+        document.getElementById('nw-status').textContent = status;
+        document.getElementById('nw-date').textContent = date;
+        document.getElementById('nw-user').textContent = user;
+        document.getElementById('networkModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    // Close modal when clicking outside
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+    });
+
+    // Close with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.show').forEach(function(m) {
+                m.classList.remove('show');
+            });
+        }
+    });
+</script>
+{% endblock %}

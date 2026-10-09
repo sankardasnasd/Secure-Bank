@@ -1,0 +1,307 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}
+
+<style>
+
+    .accounts-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 7px;
+    }
+
+    .page-subtitle {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .search-box {
+        width: 350px;
+        padding: 12px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .search-box:focus {
+        border-color: #2563eb;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    thead {
+        background: #f3f4f6;
+    }
+
+    th {
+        padding: 14px;
+        text-align: left;
+        font-size: 13px;
+        color: #374151;
+    }
+
+    td {
+        padding: 14px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 13px;
+        color: #4b5563;
+    }
+
+    tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .blocked {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .closed {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 35px;
+        color: #6b7280;
+    }
+
+    .no-result {
+        display: none;
+        text-align: center;
+        padding: 30px;
+        color: #6b7280;
+    }
+
+</style>
+
+
+<div class="accounts-container">
+
+    <div class="page-title">
+        Bank Accounts
+    </div>
+
+    <div class="page-subtitle">
+        View all customer accounts associated with your bank.
+    </div>
+
+
+    <input
+        type="text"
+        id="accountSearch"
+        class="search-box"
+        placeholder="Search account, customer, email or type..."
+    >
+
+
+    <div class="table-wrapper">
+
+        <table id="accountsTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+                    <th>Account Number</th>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Account Type</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Created Date</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for account in accounts %}
+
+                <tr class="account-row">
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        {{ account.account_number }}
+                    </td>
+
+                    <td>
+                        {{ account.user.full_name }}
+                    </td>
+
+                    <td>
+                        {{ account.user.email }}
+                    </td>
+
+                    <td>
+                        {{ account.user.phone }}
+                    </td>
+
+                    <td>
+                        {{ account.account_type }}
+                    </td>
+
+                    <td>
+                        ₹ {{ account.balance }}
+                    </td>
+
+                    <td>
+
+                        {% if account.status == 'Active' %}
+
+                            <span class="status active">
+                                Active
+                            </span>
+
+                        {% elif account.status == 'Blocked' %}
+
+                            <span class="status blocked">
+                                Blocked
+                            </span>
+
+                        {% elif account.status == 'Pending' %}
+
+                            <span class="status pending">
+                                Pending
+                            </span>
+
+                        {% elif account.status == 'Closed' %}
+
+                            <span class="status closed">
+                                Closed
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ account.created_at|date:"d M Y, h:i A" }}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="9" class="no-data">
+                        No accounts found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+                <tr id="noSearchResult">
+
+                    <td colspan="9" class="no-result">
+                        No matching accounts found.
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+
+$(document).ready(function() {
+
+    $('#accountSearch').on('keyup', function() {
+
+        let searchValue = $(this).val().toLowerCase().trim();
+
+        let visibleRows = 0;
+
+        $('#accountsTable tbody .account-row').each(function() {
+
+            let rowText = $(this).text().toLowerCase();
+
+            if (rowText.includes(searchValue)) {
+
+                $(this).show();
+
+                visibleRows++;
+
+            } else {
+
+                $(this).hide();
+
+            }
+
+        });
+
+        if (visibleRows === 0 && searchValue !== '') {
+
+            $('#noSearchResult').show();
+
+        } else {
+
+            $('#noSearchResult').hide();
+
+        }
+
+    });
+
+});
+
+</script>
+
+
+{% endblock %}

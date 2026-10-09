@@ -1,0 +1,111 @@
+{% extends 'admin/home sub.html' %}
+{% block body %}<html>
+<head>
+    <title>Notifications</title>
+
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f9; }
+        .container { width: 90%; margin: 40px auto; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        h1 { margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f1f3f5; }
+        .type { font-weight: bold; }
+        .fraud { color: #dc3545; }
+        .phishing { color: #dc3545; }
+        .malware { color: #dc3545; }
+        .network { color: #856404; }
+        .general { color: #007bff; }
+        .pending { color: #856404; }
+        .read { color: #155724; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Notifications</h1>
+
+    <div class="card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>User</th>
+                    <th>Notification Type</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for notification in notifications %}
+
+                <tr>
+
+                    <td>{{ notification.user.username }}</td>
+
+                    <td class="type">
+
+                        {% if notification.notify_type == "Fraud Alert" %}
+                            <span class="fraud">Fraud Alert</span>
+
+                        {% elif notification.notify_type == "Phishing Alert" %}
+                            <span class="phishing">Phishing Alert</span>
+
+                        {% elif notification.notify_type == "Malware Alert" %}
+                            <span class="malware">Malware Alert</span>
+
+                        {% elif notification.notify_type == "Network Alert" %}
+                            <span class="network">Network Alert</span>
+
+                        {% else %}
+                            <span class="general">General</span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ notification.message }}</td>
+
+                    <td>
+
+                        {% if notification.status == "Read" %}
+                            <span class="read">Read</span>
+                        {% else %}
+                            <span class="pending">Pending</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ notification.created_at }}</td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5">No notifications found.</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+
+{% endblock %}

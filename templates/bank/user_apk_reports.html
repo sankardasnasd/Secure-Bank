@@ -1,0 +1,457 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}
+
+<style>
+    .reports-container {
+        max-width: 1200px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .reports-header {
+        background: linear-gradient(135deg, #111827, #1e40af);
+        color: #fff;
+        border-radius: 18px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .reports-header h1 { font-size: 26px; font-weight: 700; margin: 0 0 8px; }
+    .reports-header p { margin: 0; color: #dbeafe; font-size: 14px; }
+
+    .new-scan-btn {
+        background: #fff;
+        color: #1e40af;
+        font-weight: 600;
+        border-radius: 9px;
+        padding: 10px 18px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .new-scan-btn:hover { background: #dbeafe; color: #1e3a8a; }
+
+    /* Stat cards */
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 16px 18px;
+        height: 100%;
+        border-left-width: 5px;
+    }
+
+    .stat-card .stat-label { font-size: 13px; color: #6b7280; }
+    .stat-card .stat-value { font-size: 28px; font-weight: 700; line-height: 1.2; color: #111827; }
+    .stat-total     { border-left-color: #2563eb; }
+    .stat-clean     { border-left-color: #16a34a; }
+    .stat-suspicious{ border-left-color: #f59e0b; }
+    .stat-malicious { border-left-color: #dc2626; }
+    .stat-pending   { border-left-color: #6b7280; }
+
+    /* Panel */
+    .reports-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .06);
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+    .filter-bar {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f9fafb;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    .reports-table { margin: 0; min-width: 880px; }
+    .reports-table thead th {
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        background: #f3f4f6;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+        padding: 12px 16px;
+    }
+    .reports-table td { padding: 14px 16px; vertical-align: middle; font-size: 14px; }
+
+    .file-cell { max-width: 260px; font-weight: 600; color: #111827; overflow-wrap: anywhere; }
+
+    .hash-text {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        color: #4b5563;
+    }
+
+    .copy-btn {
+        border: 0;
+        background: transparent;
+        color: #2563eb;
+        font-size: 12px;
+        padding: 0 0 0 6px;
+    }
+    .copy-btn:hover { text-decoration: underline; }
+
+    .reason-text {
+        max-width: 280px;
+        color: #4b5563;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Badges: color is always paired with a text label */
+    .pill {
+        display: inline-block;
+        padding: 4px 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .pill-clean      { background: #dcfce7; color: #166534; }
+    .pill-suspicious { background: #fef3c7; color: #92400e; }
+    .pill-malicious  { background: #fee2e2; color: #991b1b; }
+    .pill-pending    { background: #e5e7eb; color: #374151; }
+    .pill-completed  { background: #dbeafe; color: #1e40af; }
+    .pill-failed     { background: #fee2e2; color: #991b1b; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: #6b7280; }
+    .empty-state .empty-icon { font-size: 48px; line-height: 1; margin-bottom: 12px; }
+
+    .detail-label { font-size: 12px; color: #6b7280; margin-bottom: 2px; }
+    .detail-value { margin-bottom: 14px; overflow-wrap: anywhere; }
+
+    .pagination-bar { padding: 14px 20px; border-top: 1px solid #e5e7eb; }
+
+    @media (max-width: 576px) {
+        .reports-container { padding: 12px; margin: 15px auto; }
+        .reports-header { padding: 22px; }
+        .reports-header h1 { font-size: 22px; }
+    }
+</style>
+
+<div class="container reports-container">
+
+    <!-- Django messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if 'error' in message.tags %}alert-danger{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show"
+                 role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="reports-header">
+        <div>
+            <h1>📋 Malware Scan Reports</h1>
+            <p>Review every file scanned in the sandbox and its verdict.</p>
+        </div>
+        <a href="{% url 'apk_sandbox' %}" class="new-scan-btn">🔍 Scan a new file</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mt-1">
+        <div class="col-6 col-md">
+            <div class="stat-card stat-total">
+                <div class="stat-label">Total scans</div>
+                <div class="stat-value">{{ total_scans }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="stat-card stat-clean">
+                <div class="stat-label">Clean</div>
+                <div class="stat-value">{{ clean_count }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="stat-card stat-suspicious">
+                <div class="stat-label">Suspicious</div>
+                <div class="stat-value">{{ suspicious_count }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="stat-card stat-malicious">
+                <div class="stat-label">Malicious</div>
+                <div class="stat-value">{{ malicious_count }}</div>
+            </div>
+        </div>
+        <div class="col-12 col-md">
+            <div class="stat-card stat-pending">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value">{{ pending_count }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports table -->
+    <div class="reports-card">
+
+        <div class="filter-bar">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label for="q" class="form-label small fw-bold mb-1">Search</label>
+                    <input type="search" id="q" class="form-control" placeholder="File name or SHA-256 hash">
+                </div>
+                <div class="col-6 col-md-2">
+                    <label for="resultFilter" class="form-label small fw-bold mb-1">Verdict</label>
+                    <select id="resultFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="clean">Clean</option>
+                        <option value="suspicious">Suspicious</option>
+                        <option value="malicious">Malicious</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <label for="statusFilter" class="form-label small fw-bold mb-1">Status</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-center justify-content-between">
+                    <span class="small text-muted" id="resultCount" aria-live="polite"></span>
+                    <button type="button" class="btn btn-outline-secondary" id="clearFilters">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        {% if reports %}
+            <div class="table-wrap">
+                <table class="table table-hover reports-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">File</th>
+                            <th scope="col">SHA-256</th>
+                            <th scope="col">Verdict</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Reason</th>
+                            {% if request.user.is_staff %}<th scope="col">Uploaded by</th>{% endif %}
+                            <th scope="col">Scanned on</th>
+                            <th scope="col"><span class="visually-hidden">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in reports %}
+                            <tr class="report-row"
+                                data-search="{{ scan.apk_file.name|cut:'apk_files/'|lower }} {{ scan.file_hash|lower }}"
+                                data-result="{{ scan.scan_result|lower }}"
+                                data-status="{{ scan.status|lower }}">
+                                <td>{{ forloop.counter }}</td>
+
+                                <td class="file-cell">{{ scan.apk_file.name|cut:"apk_files/" }}</td>
+
+                                <td>
+                                    <span class="hash-text" title="{{ scan.file_hash }}">{{ scan.file_hash|slice:":16" }}...</span>
+                                    <button type="button" class="copy-btn" data-hash="{{ scan.file_hash }}">Copy</button>
+                                </td>
+
+                                <td>
+                                    <span class="pill pill-{{ scan.scan_result|lower }}">{{ scan.scan_result }}</span>
+                                </td>
+
+                                <td>
+                                    <span class="pill pill-{{ scan.status|lower }}">{{ scan.status }}</span>
+                                </td>
+
+                                <td>
+                                    {% if scan.reason %}
+                                        <div class="reason-text">{{ scan.reason }}</div>
+                                    {% else %}
+                                        <span class="text-muted">No reason recorded</span>
+                                    {% endif %}
+                                </td>
+
+                                {% if request.user.is_staff %}
+                                    <td>{{ scan.uploaded_by.get_username }}</td>
+                                {% endif %}
+
+                                <td class="text-nowrap">{{ scan.created_at|date:"d M Y, H:i" }}</td>
+
+                                <td class="text-end">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-primary detail-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#detailModal"
+                                            data-file="{{ scan.apk_file.name|cut:'apk_files/' }}"
+                                            data-hash="{{ scan.file_hash }}"
+                                            data-result="{{ scan.scan_result }}"
+                                            data-status="{{ scan.status }}"
+                                            data-reason="{{ scan.reason|default:'No reason recorded' }}"
+                                            data-user="{{ scan.uploaded_by.get_username }}"
+                                            data-date="{{ scan.created_at|date:'d M Y, H:i' }}">
+                                        View details
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="empty-state d-none" id="noMatch">
+                <div class="empty-icon" aria-hidden="true">🔎</div>
+                <h2 class="h5">No reports match your filters</h2>
+                <p>Try a different search or clear the filters.</p>
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon" aria-hidden="true">🗂️</div>
+                <h2 class="h5">No scans yet</h2>
+                <p>Upload an APK or EXE file to see its report here.</p>
+                <a href="{% url 'apk_sandbox' %}" class="btn btn-primary">Scan a file</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Details modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="detailModalTitle">Scan details</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-label">File</div>
+                <div class="detail-value fw-bold" id="mFile"></div>
+
+                <div class="detail-label">SHA-256</div>
+                <div class="detail-value hash-text" id="mHash"></div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="detail-label">Verdict</div>
+                        <div class="detail-value" id="mResult"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value" id="mStatus"></div>
+                    </div>
+                </div>
+
+                <div class="detail-label">Reason</div>
+                <div class="detail-value" id="mReason"></div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="detail-label">Uploaded by</div>
+                        <div class="detail-value" id="mUser"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="detail-label">Scanned on</div>
+                        <div class="detail-value" id="mDate"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Client-side search and filters
+        const rows = document.querySelectorAll('.report-row');
+        const q = document.getElementById('q');
+        const resultFilter = document.getElementById('resultFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const resultCount = document.getElementById('resultCount');
+        const noMatch = document.getElementById('noMatch');
+        const tableWrap = document.querySelector('.table-wrap');
+
+        function applyFilters() {
+            const term = q.value.trim().toLowerCase();
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const show =
+                    (!term || row.dataset.search.indexOf(term) !== -1) &&
+                    (!resultFilter.value || row.dataset.result === resultFilter.value) &&
+                    (!statusFilter.value || row.dataset.status === statusFilter.value);
+                row.hidden = !show;
+                if (show) visible++;
+            });
+
+            resultCount.textContent = visible + ' of ' + rows.length + ' shown';
+            if (noMatch && tableWrap) {
+                noMatch.classList.toggle('d-none', visible !== 0);
+                tableWrap.classList.toggle('d-none', visible === 0);
+            }
+        }
+
+        if (rows.length) {
+            [q, resultFilter, statusFilter].forEach(function (el) {
+                el.addEventListener('input', applyFilters);
+            });
+            document.getElementById('clearFilters').addEventListener('click', function () {
+                q.value = '';
+                resultFilter.value = '';
+                statusFilter.value = '';
+                applyFilters();
+            });
+            applyFilters();
+        }
+
+        // Fill the details modal from the clicked row's data attributes
+        function pill(text) {
+            const span = document.createElement('span');
+            span.className = 'pill pill-' + text.toLowerCase();
+            span.textContent = text;
+            return span;
+        }
+
+        document.querySelectorAll('.detail-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const d = btn.dataset;
+                document.getElementById('mFile').textContent = d.file;
+                document.getElementById('mHash').textContent = d.hash;
+                document.getElementById('mReason').textContent = d.reason;
+                document.getElementById('mUser').textContent = d.user;
+                document.getElementById('mDate').textContent = d.date;
+
+                const result = document.getElementById('mResult');
+                const status = document.getElementById('mStatus');
+                result.replaceChildren(pill(d.result));
+                status.replaceChildren(pill(d.status));
+            });
+        });
+
+        // Copy hash to clipboard
+        document.querySelectorAll('.copy-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const original = btn.textContent;
+                navigator.clipboard.writeText(btn.dataset.hash).then(function () {
+                    btn.textContent = 'Copied';
+                    setTimeout(function () { btn.textContent = original; }, 1500);
+                }).catch(function () {
+                    btn.textContent = 'Copy failed';
+                    setTimeout(function () { btn.textContent = original; }, 1500);
+                });
+            });
+        });
+    })();
+</script>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{#{% extends 'admin/home sub.html' %}#}
+{#{% block body %}<html>#}
+{#<head>#}
+{#    <title>Network Monitoring</title>#}
+{##}
+{#    <style>#}
+{#        body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f9; }#}
+{#        .container { width: 94%; margin: 40px auto; }#}
+{#        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }#}
+{#        h1 { margin-bottom: 25px; }#}
+{#        table { width: 100%; border-collapse: collapse; }#}
+{#        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #ddd; }#}
+{#        th { background: #f1f3f5; }#}
+{#        .allowed { color: #155724; font-weight: bold; }#}
+{#        .blocked { color: #dc3545; font-weight: bold; }#}
+{#        .ddos { color: #dc3545; font-weight: bold; }#}
+{#        .suspicious { color: #856404; font-weight: bold; }#}
+{#    </style>#}
+{#</head>#}
+{##}
+{#<body>#}
+{##}
+{#<div class="container">#}
+{##}
+{#    <h1>Network Monitoring</h1>#}
+{##}
+{#    <div class="card">#}
+{##}
+{#        <table>#}
+{##}
+{#            <thead>#}
+{##}
+{#                <tr>#}
+{#                    <th>User</th>#}
+{#                    <th>IP Address</th>#}
+{#                    <th>Route</th>#}
+{#                    <th>Request Count</th>#}
+{#                    <th>Action</th>#}
+{#                    <th>Status</th>#}
+{#                    <th>Date</th>#}
+{#                </tr>#}
+{##}
+{#            </thead>#}
+{##}
+{#            <tbody>#}
+{##}
+{#                {% for log in network_logs %}#}
+{##}
+{#                <tr>#}
+{##}
+{#                    <td>#}
+{#                        {% if log.user %}#}
+{#                            {{ log.user.full_name }}#}
+{#                        {% else %}#}
+{#                            Unknown#}
+{#                        {% endif %}#}
+{#                    </td>#}
+{##}
+{#                    <td>{{ log.client_ip }}</td>#}
+{##}
+{#                    <td>{{ log.route }}</td>#}
+{##}
+{#                    <td>{{ log.request_count }}</td>#}
+{##}
+{#                    <td>#}
+{##}
+{#                        {% if log.action_taken == "Blocked" %}#}
+{#                            <span class="blocked">Blocked</span>#}
+{#                        {% else %}#}
+{#                            <span class="allowed">Allowed</span>#}
+{#                        {% endif %}#}
+{##}
+{#                    </td>#}
+{##}
+{#                    <td>#}
+{##}
+{#                        {% if log.status == "DDoS Detected" %}#}
+{#                            <span class="ddos">DDoS Detected</span>#}
+{##}
+{#                        {% elif log.status == "Suspicious" %}#}
+{#                            <span class="suspicious">Suspicious</span>#}
+{##}
+{#                        {% else %}#}
+{#                            {{ log.status }}#}
+{##}
+{#                        {% endif %}#}
+{##}
+{#                    </td>#}
+{##}
+{#                    <td>{{ log.created_at }}</td>#}
+{##}
+{#                </tr>#}
+{##}
+{#                {% empty %}#}
+{##}
+{#                <tr>#}
+{#                    <td colspan="7">No network activity found.</td>#}
+{#                </tr>#}
+{##}
+{#                {% endfor %}#}
+{##}
+{#            </tbody>#}
+{##}
+{#        </table>#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+{##}
+{#</body>#}
+{#</html>#}
+{##}
+{#{% endblock %}#}

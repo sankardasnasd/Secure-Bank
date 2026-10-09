@@ -1,0 +1,63 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: url-security-gateway
+
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+      routes:
+
+        # ==========================================
+        # PHISHING DETECTION SERVICE
+        # Python FastAPI ML Service :8001
+        # ==========================================
+        - id: phishing_detection
+          uri: http://localhost:8001
+          predicates:
+            - Path=/phishing/**
+          filters:
+            - RewritePath=/phishing/(?<segment>.*), /predict
+
+        # ==========================================
+        # DJANGO BACKEND
+        # ==========================================
+        - id: django_backend_direct
+          uri: http://localhost:8000
+          predicates:
+            - Path=/api/**
+          filters:
+            - UrlSecurityGateway
+
+        # ==========================================
+        # DJANGO BACKEND PROXY
+        # ==========================================
+        - id: django_backend_proxy_checker
+          uri: http://localhost:8000
+          predicates:
+            - Path=/proxy/**
+          filters:
+            - RewritePath=/proxy/(?<segment>.*), /api/$\{segment}
+            - UrlSecurityGateway
+
+# ==========================================
+# MANAGEMENT / ACTUATOR
+# ==========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway

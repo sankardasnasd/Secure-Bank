@@ -1,0 +1,11 @@
+com\security\gateway\service\PhishingDetectionService$UrlRequest.class
+com\security\gateway\model\UrlCheckResponse$UrlCheckResponseBuilder.class
+com\security\gateway\service\UrlSecurityService.class
+com\security\gateway\model\PhishingCheckResponse.class
+com\security\gateway\service\PhishingDetectionService.class
+com\security\gateway\controller\UrlCheckerController.class
+com\security\gateway\filter\UrlSecurityGatewayFilterFactory$Config.class
+com\security\gateway\UrlSecurityGatewayApplication.class
+com\security\gateway\model\UrlCheckResponse.class
+com\security\gateway\model\UrlCheckRequest.class
+com\security\gateway\filter\UrlSecurityGatewayFilterFactory.class

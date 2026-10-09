@@ -1,0 +1,270 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malware Analysis – SecureBank</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--blue-l:#e9f5fd;--blue-m:#bfe0f7;--blue:#2b8fd6;--blue-d:#1d6aa5;--green-l:#e3f7ec;--green-m:#a9e5c3;--green:#2e9e6b;--red:#c0392b;--red-l:#fdecea;--red-m:#f3c3be;--amber:#b7791f;--amber-l:#fff4dc;--ink:#16324a;--muted:#5d7388;--line:#dbe9f2;--h:'Manrope',system-ui,sans-serif;--b:'Nunito Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--b);color:var(--ink);min-height:100vh;background:linear-gradient(160deg,#f5f9fc,#fff 40%,#f1faf5);line-height:1.6}
+a{color:var(--blue-d)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:860px;margin:0 auto;padding:20px 18px 0}
+.logo{display:flex;align-items:center;gap:8px;font:800 1.2rem var(--h);color:var(--blue-d);text-decoration:none}
+.back{font:700 .88rem var(--h);text-decoration:none;color:var(--muted);padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.back:hover{color:var(--blue-d);border-color:var(--blue-m)}
+
+.wrap{max-width:860px;margin:18px auto 40px;padding:0 18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 14px 36px rgba(29,106,165,.1)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center;padding:28px 32px;background:linear-gradient(120deg,var(--blue-l),#fff 55%,var(--green-l));border-bottom:1px solid var(--line)}
+.hero h1{font:800 1.6rem/1.15 var(--h);letter-spacing:-.01em}
+.hero p{color:var(--muted);margin-top:8px;max-width:44ch;font-size:.94rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chips span{font:700 .76rem var(--h);padding:5px 12px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--blue-d)}
+.chips span:nth-child(2){color:#17724b;border-color:var(--green-m)}
+.art{width:100%;max-width:300px;justify-self:end}
+.scan{animation:scan 3s ease-in-out infinite}
+@keyframes scan{0%,100%{transform:translateY(0)}50%{transform:translateY(86px)}}
+.bug{animation:bug 3s ease-in-out infinite;transform-origin:center}
+@keyframes bug{0%,35%{opacity:0;transform:translate(-14px,6px)}55%,80%{opacity:1;transform:none}100%{opacity:0;transform:scale(.4)}}
+.sh{animation:float 5s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-7px)}}
+.tick{stroke-dasharray:40;stroke-dashoffset:40;animation:tk 3s ease infinite}
+@keyframes tk{45%,100%{stroke-dashoffset:0}}
+
+.body{padding:28px 32px 32px}
+
+/* messages */
+.msg{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:.92rem;background:var(--blue-l);color:var(--blue-d);border:1px solid var(--blue-m)}
+.msg.error{background:var(--red-l);color:var(--red);border-color:var(--red-m)}
+.msg.success{background:var(--green-l);color:#17724b;border-color:var(--green-m)}
+.msg button{background:none;border:0;font-size:1.2rem;line-height:1;cursor:pointer;color:inherit;opacity:.7}
+
+/* drop zone */
+.drop{position:relative;border:2px dashed var(--blue-m);border-radius:18px;background:var(--blue-l);padding:34px 20px;text-align:center;transition:border-color .2s,background .2s,transform .2s}
+.drop:hover,.drop.over{border-color:var(--blue);background:#dff0fc}
+.drop.over{transform:scale(1.01)}
+.drop:focus-within{outline:3px solid var(--blue);outline-offset:3px}
+.drop.bad{border-color:var(--red);background:var(--red-l)}
+.drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.drop svg.up{width:64px;height:64px;margin-bottom:8px;animation:float 4s ease-in-out infinite}
+.drop b{display:block;font:800 1.05rem var(--h)}
+.drop small{display:block;color:var(--muted);font-size:.85rem;margin-top:4px}
+.types{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.types span{display:flex;align-items:center;gap:6px;font:700 .78rem var(--h);background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px 11px;color:var(--muted)}
+.types svg{width:18px;height:18px}
+
+/* selected file */
+.file{display:flex;align-items:center;gap:14px;margin-top:16px;padding:14px 16px;border:1px solid var(--green-m);background:var(--green-l);border-radius:14px;animation:in .3s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.file[hidden]{display:none}
+.file svg{width:42px;height:42px;flex:none}
+.file div{min-width:0;flex:1}
+.file b{display:block;font:700 .92rem var(--h);overflow-wrap:anywhere}
+.file small{color:#17724b;font-size:.82rem}
+.file button{background:#fff;border:1px solid var(--green-m);border-radius:9px;padding:6px 12px;font:700 .8rem var(--h);color:var(--muted);cursor:pointer}
+.file button:hover{color:var(--red);border-color:var(--red-m)}
+.err{display:none;margin-top:12px;padding:11px 14px;border-radius:11px;background:var(--red-l);border:1px solid var(--red-m);color:var(--red);font-size:.88rem}
+.err.show{display:block}
+
+.go{width:100%;margin-top:20px;padding:15px;border:0;border-radius:13px;background:var(--blue-d);color:#fff;font:800 1rem var(--h);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 20px rgba(29,106,165,.25);transition:transform .2s}
+.go:hover{transform:translateY(-2px)}
+.go:disabled{opacity:.8;cursor:wait;transform:none}
+.spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.go.busy .spin{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prog{height:6px;border-radius:6px;background:var(--blue-l);margin-top:12px;overflow:hidden;display:none}
+.prog i{display:block;height:100%;width:35%;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--green));animation:slide 1.2s ease-in-out infinite}
+.prog.show{display:block}
+@keyframes slide{0%{margin-left:-35%}100%{margin-left:100%}}
+.reports{text-align:center;margin-top:18px}
+.reports a{font:700 .92rem var(--h);text-decoration:none}
+.reports a:hover{text-decoration:underline}
+
+/* how it works */
+.how{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.how h2{font:800 1.02rem var(--h);margin-bottom:14px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;list-style:none;padding:0}
+.steps li{background:#f9fcfe;border:1px solid var(--line);border-radius:14px;padding:16px;font-size:.86rem;color:var(--muted)}
+.steps svg{width:42px;height:42px;margin-bottom:8px}
+.steps b{display:block;color:var(--ink);font:800 .92rem var(--h);margin-bottom:3px}
+.warn{display:flex;gap:12px;margin-top:20px;padding:14px 16px;border-radius:14px;background:var(--amber-l);border:1px solid #f4dba5;color:#8a5a14;font-size:.85rem;line-height:1.55}
+.warn svg{width:22px;height:22px;flex:none;margin-top:2px}
+.foot{text-align:center;margin-top:20px;color:var(--muted);font-size:.82rem}
+
+@media(max-width:760px){
+  .hero{grid-template-columns:1fr;padding:22px}
+  .art{justify-self:center;max-width:240px;order:-1}
+  .body{padding:22px}
+  .steps{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.tick{stroke-dashoffset:0}.bug{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- file icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="f-apk" viewBox="0 0 42 42"><path d="M8 3h19l8 8v28H8z" fill="#2e9e6b"/><path d="M27 3v8h8" fill="#a9e5c3"/><text x="21" y="31" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="10" fill="#fff">APK</text></symbol>
+  <symbol id="f-exe" viewBox="0 0 42 42"><path d="M8 3h19l8 8v28H8z" fill="#2b8fd6"/><path d="M27 3v8h8" fill="#bfe0f7"/><text x="21" y="31" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="10" fill="#fff">EXE</text></symbol>
+</svg>
+
+<div class="bar">
+  <a class="logo" href="/myapp/bank_home/">
+    <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path d="M13 1 2 5v8c0 7 5 12 11 14 6-2 11-7 11-14V5z" fill="#2b8fd6"/><path d="m8 14 4 4 7-8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    SecureBank
+  </a>
+  <a class="back" href="/myapp/bank_home/">&larr; Back to dashboard</a>
+</div>
+
+<div class="wrap">
+  <div class="card">
+
+    <!-- hero -->
+    <div class="hero">
+      <div>
+        <h1>Malware Analysis</h1>
+        <p>Upload an Android APK or Windows EXE file and SecureBank will analyse it in an isolated sandbox before anyone installs it.</p>
+        <div class="chips"><span>Isolated sandbox</span><span>APK and EXE</span><span>Report in minutes</span></div>
+      </div>
+
+      <svg class="art" viewBox="0 0 320 220" aria-hidden="true">
+        <defs><clipPath id="sbClip"><rect x="60" y="48" width="130" height="128"/></clipPath></defs>
+        <rect x="24" y="22" width="272" height="176" rx="20" fill="#e9f5fd" stroke="#bfe0f7" stroke-width="3" stroke-dasharray="9 7"/>
+        <text x="40" y="44" font-family="sans-serif" font-weight="700" font-size="11" fill="#1d6aa5">SANDBOX</text>
+        <path d="M70 52h72l36 36v84a6 6 0 0 1-6 6H70a6 6 0 0 1-6-6V58a6 6 0 0 1 6-6z" fill="#fff" stroke="#bfe0f7" stroke-width="2.5"/>
+        <path d="M142 52v36h36" fill="#e9f5fd" stroke="#bfe0f7" stroke-width="2.5"/>
+        <text x="121" y="136" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="24" fill="#2e9e6b">APK</text>
+        <rect x="84" y="150" width="74" height="7" rx="3.5" fill="#dbe9f2"/><rect x="84" y="164" width="52" height="7" rx="3.5" fill="#e9f5fd"/>
+        <g clip-path="url(#sbClip)"><rect class="scan" x="60" y="52" width="130" height="4" fill="#2e9e6b" opacity=".85"/></g>
+        <g class="bug" transform="translate(236 78)">
+          <ellipse cx="0" cy="0" rx="13" ry="16" fill="#c0392b"/><circle cx="0" cy="-19" r="7" fill="#c0392b"/>
+          <path d="M-13-6-24-12M-13 2-26 2M-13 10-24 18M13-6 24-12M13 2 26 2M13 10 24 18" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>
+        </g>
+        <g class="sh"><path d="M244 120 214 132v22c0 20 13 33 30 40 17-7 30-20 30-40v-22z" fill="#2e9e6b"/><path class="tick" d="m229 154 11 11 20-23" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+      </svg>
+    </div>
+
+    <div class="body">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="msg {{ message.tags }}" role="alert"><span>{{ message }}</span><button type="button" aria-label="Dismiss" onclick="this.parentNode.remove()">&times;</button></div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="POST" action="{% url 'upload_and_sandbox_apk' %}" enctype="multipart/form-data" id="scanForm">
+        {% csrf_token %}
+
+        <div class="drop" id="drop">
+          <input type="file" id="apk_file" name="apk_file" accept=".apk,.exe" required aria-label="Choose an APK or EXE file" aria-describedby="fileErr">
+          <svg class="up" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff"/><path d="M32 42V22M23 30l9-9 9 9" stroke="#1d6aa5" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 46h28" stroke="#2e9e6b" stroke-width="4" stroke-linecap="round"/></svg>
+          <b>Drag a file here or click to browse</b>
+          <small>Maximum file size: 100 MB</small>
+          <div class="types"><span><svg><use href="#f-apk"/></svg>.apk</span><span><svg><use href="#f-exe"/></svg>.exe</span></div>
+        </div>
+
+        <div class="file" id="fileCard" hidden>
+          <svg id="fileIcon" aria-hidden="true"><use href="#f-apk"/></svg>
+          <div><b id="fileName"></b><small id="fileSize"></small></div>
+          <button type="button" id="fileClear">Remove</button>
+        </div>
+        <div class="err" id="fileErr" role="alert"></div>
+
+        <button type="submit" id="scanButton" class="go">
+          <span class="spin" aria-hidden="true"></span>
+          <svg id="goIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2.2 2.2L15 10"/></svg>
+          <span id="goText">Upload &amp; Analyze</span>
+        </button>
+        <div class="prog" id="prog" aria-hidden="true"><i></i></div>
+      </form>
+
+      <div class="reports"><a href="/myapp/view_apk_reports/#a">View Previous Scan Reports &rarr;</a></div>
+
+      <div class="how">
+        <h2>What happens to your file</h2>
+        <ol class="steps">
+          <li>
+            <svg viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="21" fill="#e9f5fd"/><path d="M21 28V14M15 19l6-6 6 6" stroke="#1d6aa5" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 31h18" stroke="#2e9e6b" stroke-width="3" stroke-linecap="round"/></svg>
+            <b>1. Upload</b>Your file is sent securely to SecureBank.
+          </li>
+          <li>
+            <svg viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="21" fill="#e3f7ec"/><rect x="10" y="11" width="22" height="20" rx="4" fill="none" stroke="#2e9e6b" stroke-width="2.6" stroke-dasharray="4 3"/><circle cx="21" cy="21" r="4" fill="#2e9e6b"/></svg>
+            <b>2. Sandbox analysis</b>It runs in a closed, isolated space that cannot reach real systems.
+          </li>
+          <li>
+            <svg viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="21" fill="#e9f5fd"/><path d="M21 9 12 13v7c0 6 4 10 9 12 5-2 9-6 9-12v-7z" fill="#2b8fd6"/><path d="m16.5 21 3.5 3.5 6-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <b>3. Report</b>You see clean, suspicious or malicious, and the admin is told if it is harmful.
+          </li>
+        </ol>
+
+        <div class="warn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+          <div><strong>Security warning:</strong> Uploading a file does not prove it is safe. Run executable analysis only in a properly isolated sandbox with restricted network and host access.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot">SecureBank &copy; {% now "Y" %} · Safe banking, watched around the clock</div>
+</div>
+
+<script>
+(function(){
+  var form=document.getElementById('scanForm'),input=document.getElementById('apk_file'),drop=document.getElementById('drop'),
+      card=document.getElementById('fileCard'),err=document.getElementById('fileErr'),btn=document.getElementById('scanButton'),
+      MAX=100*1024*1024;
+
+  function ext(n){var i=n.lastIndexOf('.');return i<0?'':n.slice(i).toLowerCase()}
+  function fmt(b){return b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(2)+' MB'}
+  function problem(f){
+    if(!f)return'Please select an APK or EXE file.';
+    if(['.apk','.exe'].indexOf(ext(f.name))<0)return'Only APK and EXE files are allowed.';
+    if(f.size===0)return'The selected file is empty.';
+    if(f.size>MAX)return'File exceeds the 100 MB limit.';
+    return'';
+  }
+  function showErr(m){err.textContent=m;err.classList.add('show');drop.classList.add('bad')}
+  function hideErr(){err.classList.remove('show');drop.classList.remove('bad')}
+  function clearFile(){input.value='';card.hidden=true}
+
+  input.addEventListener('change',function(){
+    var f=input.files[0];
+    if(!f){clearFile();hideErr();return}
+    var p=problem(f);
+    if(p){showErr(p);clearFile();return}
+    hideErr();
+    document.getElementById('fileName').textContent=f.name;
+    document.getElementById('fileSize').textContent='Size: '+fmt(f.size)+' · ready to analyze';
+    document.getElementById('fileIcon').firstElementChild.setAttribute('href',ext(f.name)==='.exe'?'#f-exe':'#f-apk');
+    card.hidden=false;
+  });
+
+  document.getElementById('fileClear').addEventListener('click',function(){clearFile();hideErr();input.focus()});
+
+  ['dragenter','dragover'].forEach(function(e){drop.addEventListener(e,function(){drop.classList.add('over')})});
+  ['dragleave','drop'].forEach(function(e){drop.addEventListener(e,function(){drop.classList.remove('over')})});
+
+  form.addEventListener('submit',function(e){
+    var p=problem(input.files[0]);
+    if(p){e.preventDefault();showErr(p);input.focus();return}
+    btn.disabled=true;btn.classList.add('busy');
+    document.getElementById('goIcon').style.display='none';
+    document.getElementById('goText').textContent='Uploading for analysis…';
+    document.getElementById('prog').classList.add('show');
+  });
+})();
+</script>
+
+</body>
+</html>
+
+{% endblock %}

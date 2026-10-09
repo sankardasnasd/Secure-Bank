@@ -1,0 +1,187 @@
+
+{% extends 'admin/home sub.html' %}
+{% block body %}<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>All Network Attacks | SECUREBANK</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <style>
+        body { background: #f3f6fb; color: #182b49; }
+        .hero { background: #10213d; color: white; padding: 24px; border-radius: 12px; }
+        .stat { background: white; padding: 20px; border-radius: 12px;
+                box-shadow: 0 2px 10px #0000000d; height: 100%; }
+        .number { font-size: 28px; font-weight: 700; }
+        .panel { background: white; padding: 20px; border-radius: 12px; }
+        .details { min-width: 220px; overflow-wrap: anywhere; }
+        .table th { white-space: nowrap; background: #eaf0fa; }
+    </style>
+</head>
+<body>
+<div class="container-fluid p-3 p-md-4">
+
+    <div class="hero mb-4">
+        <h2>SECUREBANK Admin</h2>
+        <h5>All Network Monitoring Attacks</h5>
+        <p class="mb-0">Network activity reports across all registered banks.</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat">Total Reports
+                <div class="number">{{ total_reports }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat">Normal
+                <div class="number text-success">{{ normal_count }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat">Suspicious
+                <div class="number text-warning">{{ suspicious_count }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat">DDoS Detected
+                <div class="number text-danger">{{ ddos_count }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat">Blocked
+                <div class="number">{{ blocked_count }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat">Banks
+                <div class="number">{{ total_banks }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel mb-4">
+        <h5>Search and Filter</h5>
+        <form method="get" class="row g-2">
+            <div class="col-12 col-lg-6">
+                <input class="form-control" name="q"
+                       value="{{ search_query }}"
+                       placeholder="Search IP, route, bank or user">
+            </div>
+
+            <div class="col-6 col-lg-2">
+                <select name="status" class="form-select">
+                    <option value="">All statuses</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}"
+                        {% if selected_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                    <option value="Normal"
+                        {% if selected_status == "Normal" %}selected{% endif %}>Normal</option>
+                    <option value="Suspicious"
+                        {% if selected_status == "Suspicious" %}selected{% endif %}>Suspicious</option>
+                    <option value="DDoS Detected"
+                        {% if selected_status == "DDoS Detected" %}selected{% endif %}>DDoS Detected</option>
+                    <option value="Pending"
+                        {% if selected_status == "Pending" %}selected{% endif %}>Pending</option>
+                </select>
+            </div>
+
+            <div class="col-6 col-lg-2">
+                <select name="action" class="form-select">
+                    <option value="">All actions</option>
+                    <option value="Allowed"
+                        {% if selected_action == "Allowed" %}selected{% endif %}>Allowed</option>
+                    <option value="Blocked"
+                        {% if selected_action == "Blocked" %}selected{% endif %}>Blocked</option>
+                </select>
+            </div>
+
+            <div class="col-6 col-lg-1">
+                <button class="btn btn-primary w-100">Search</button>
+            </div>
+            <div class="col-6 col-lg-1">
+                <a class="btn btn-outline-secondary w-100"
+                   href="{% url 'admin_all_network_monitoring' %}">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h5 class="mb-3">All Network Logs</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date & Time</th>
+                    <th>Bank</th>
+                    <th>User</th>
+                    <th>Client IP</th>
+                    <th>Route</th>
+                    <th>Request Count</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ report.created_at|date:"d M Y, h:i:s A" }}</td>
+                    <td>
+                        {% if report.user and report.user.bank %}
+                            {{ report.user.bank.bank_name }}
+                        {% else %}
+                            Unassigned
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if report.user %}
+                            {{ report.user.full_name }}
+                        {% else %}
+                            Anonymous / Unassigned
+                        {% endif %}
+                    </td>
+                    <td>{{ report.client_ip }}</td>
+                    <td class="details">{{ report.route }}</td>
+                    <td>{{ report.request_count }}</td>
+                    <td>
+                        {% if report.status == "Normal" %}
+                            <span class="badge bg-success">Normal</span>
+                        {% elif report.status == "Suspicious" %}
+                            <span class="badge bg-warning text-dark">Suspicious</span>
+                        {% elif report.status == "DDoS Detected" %}
+                            <span class="badge bg-danger">DDoS Detected</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ report.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if report.action_taken == "Blocked" %}
+                            <span class="badge bg-danger">Blocked</span>
+                        {% else %}
+                            <span class="badge bg-success">Allowed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center p-4">
+                        No network logs found.
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">Displaying at most 500 matching records.</small>
+    </div>
+
+</div>
+</body>
+</html>
+
+{% endblock %}

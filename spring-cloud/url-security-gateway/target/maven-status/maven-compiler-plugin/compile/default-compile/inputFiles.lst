@@ -1,0 +1,8 @@
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\controller\UrlCheckerController.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\service\PhishingDetectionService.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\model\PhishingCheckResponse.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\model\UrlCheckRequest.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\filter\UrlSecurityGatewayFilterFactory.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\UrlSecurityGatewayApplication.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\service\UrlSecurityService.java
+C:\Users\GAYATHRI\PycharmProjects\SECUREBANK\spring-cloud\url-security-gateway\src\main\java\com\security\gateway\model\UrlCheckResponse.java

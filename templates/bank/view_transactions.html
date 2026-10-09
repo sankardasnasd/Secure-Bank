@@ -1,0 +1,373 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}
+
+<style>
+
+    .transactions-container {
+        max-width: 1300px;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 7px;
+    }
+
+    .page-subtitle {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .search-box {
+        width: 400px;
+        padding: 12px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .search-box:focus {
+        border-color: #2563eb;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1200px;
+    }
+
+    thead {
+        background: #f3f4f6;
+    }
+
+    th {
+        padding: 14px 12px;
+        text-align: left;
+        font-size: 13px;
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 14px 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 13px;
+        color: #4b5563;
+        white-space: nowrap;
+    }
+
+    tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .failed {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .blocked {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .suspicious {
+        background: #ffedd5;
+        color: #9a3412;
+    }
+
+    .fraud-yes {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .fraud-no {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 35px;
+        color: #6b7280;
+    }
+
+    .no-result {
+        display: none;
+        text-align: center;
+        padding: 30px;
+        color: #6b7280;
+    }
+
+</style>
+
+
+<div class="transactions-container">
+
+
+    <div class="page-title">
+        Bank Transactions
+    </div>
+
+
+    <div class="page-subtitle">
+        View transactions associated with your bank accounts.
+    </div>
+
+
+    <input
+        type="text"
+        id="transactionSearch"
+        class="search-box"
+        placeholder="Search transaction, account, customer or status..."
+    >
+
+
+    <div class="table-wrapper">
+
+        <table id="transactionsTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+                    <th>Transaction Ref</th>
+                    <th>Sender</th>
+                    <th>Sender Account</th>
+                    <th>Receiver</th>
+                    <th>Receiver Account</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Fraud</th>
+                    <th>Status</th>
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for transaction in transactions %}
+
+                <tr class="transaction-row">
+
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+
+                    <td>
+                        {{ transaction.transaction_ref }}
+                    </td>
+
+
+                    <td>
+                        {{ transaction.sender_account.user.full_name }}
+                    </td>
+
+
+                    <td>
+                        {{ transaction.sender_account.account_number }}
+                    </td>
+
+
+                    <td>
+                        {{ transaction.receiver_account.user.full_name }}
+                    </td>
+
+
+                    <td>
+                        {{ transaction.receiver_account.account_number }}
+                    </td>
+
+
+                    <td>
+                        ₹ {{ transaction.amount }}
+                    </td>
+
+
+                    <td>
+                        {{ transaction.transaction_type }}
+                    </td>
+
+
+                    <td>
+
+                        {% if transaction.is_fraud == 'Yes' %}
+
+                            <span class="status fraud-yes">
+                                Yes
+                            </span>
+
+                        {% else %}
+
+                            <span class="status fraud-no">
+                                No
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if transaction.status == 'Success' %}
+
+                            <span class="status success">
+                                Success
+                            </span>
+
+                        {% elif transaction.status == 'Pending' %}
+
+                            <span class="status pending">
+                                Pending
+                            </span>
+
+                        {% elif transaction.status == 'Failed' %}
+
+                            <span class="status failed">
+                                Failed
+                            </span>
+
+                        {% elif transaction.status == 'Blocked' %}
+
+                            <span class="status blocked">
+                                Blocked
+                            </span>
+
+                        {% elif transaction.status == 'Suspicious' %}
+
+                            <span class="status suspicious">
+                                Suspicious
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ transaction.created_at|date:"d M Y, h:i A" }}
+                    </td>
+
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="11" class="no-data">
+                        No transactions found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+                <tr id="noTransactionResult">
+
+                    <td colspan="11" class="no-result">
+                        No matching transactions found.
+                    </td>
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+<script>
+
+$(document).ready(function() {
+
+    $('#transactionSearch').on('keyup', function() {
+
+        let searchValue = $(this).val().toLowerCase().trim();
+
+        let visibleRows = 0;
+
+
+        $('#transactionsTable tbody .transaction-row').each(function() {
+
+            let rowText = $(this).text().toLowerCase();
+
+
+            if (rowText.includes(searchValue)) {
+
+                $(this).show();
+
+                visibleRows++;
+
+            } else {
+
+                $(this).hide();
+
+            }
+
+        });
+
+
+        if (visibleRows === 0 && searchValue !== '') {
+
+            $('#noTransactionResult').show();
+
+        } else {
+
+            $('#noTransactionResult').hide();
+
+        }
+
+    });
+
+});
+
+</script>
+
+
+{% endblock %}

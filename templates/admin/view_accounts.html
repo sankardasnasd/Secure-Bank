@@ -1,0 +1,86 @@
+{% extends 'admin/home sub.html' %}
+{% block body %}<html>
+<head>
+    <title>View Accounts</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f9; }
+        .container { width: 92%; margin: 40px auto; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        h1 { margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f1f3f5; }
+        .status { padding: 6px 12px; border-radius: 20px; font-size: 13px; }
+        .active { background: #d4edda; color: #155724; }
+        .pending { background: #fff3cd; color: #856404; }
+        .blocked { background: #f8d7da; color: #721c24; }
+        .closed { background: #e2e3e5; color: #383d41; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>View Accounts</h1>
+
+    <div class="card">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>User</th>
+                    <th>Bank</th>
+                    <th>Account Type</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for account in accounts %}
+
+                <tr>
+                    <td>{{ account.account_number }}</td>
+                    <td>{{ account.user.full_name }}</td>
+                    <td>{{ account.bank.bank_name }}</td>
+                    <td>{{ account.account_type }}</td>
+                    <td>₹ {{ account.balance }}</td>
+
+                    <td>
+                        {% if account.status == "Active" %}
+                            <span class="status active">Active</span>
+                        {% elif account.status == "Pending" %}
+                            <span class="status pending">Pending</span>
+                        {% elif account.status == "Blocked" %}
+                            <span class="status blocked">Blocked</span>
+                        {% else %}
+                            <span class="status closed">Closed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="6">No accounts found.</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+
+
+{% endblock %}

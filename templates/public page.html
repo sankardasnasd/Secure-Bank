@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureBank – Calm, protected banking</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--white:#fff;--blue-l:#e9f5fd;--blue-m:#bfe0f7;--blue:#2b8fd6;--blue-d:#1d6aa5;--green-l:#e3f7ec;--green-m:#a9e5c3;--green:#2e9e6b;--ink:#16324a;--muted:#5d7388;--line:#dbe9f2;--h:'Manrope',system-ui,sans-serif;--b:'Nunito Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--b);color:var(--ink);background:var(--white);line-height:1.65;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.btn{display:inline-block;padding:12px 24px;border-radius:12px;font:700 .95rem var(--h);text-decoration:none;border:0;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-blue{background:var(--blue-d);color:#fff;box-shadow:0 8px 20px rgba(29,106,165,.25)}
+.btn-green{background:var(--green-l);color:#17724b;border:1px solid var(--green-m)}
+
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{display:flex;align-items:center;gap:8px;font:800 1.25rem var(--h);text-decoration:none;color:var(--blue-d)}
+.menu{display:flex;gap:26px;align-items:center}
+.menu a:not(.btn){text-decoration:none;font-weight:600;font-size:.94rem;color:var(--muted)}
+.menu a:not(.btn):hover{color:var(--blue-d)}
+.burger{display:none;background:none;border:0;font-size:1.6rem;color:var(--blue-d);cursor:pointer}
+
+.hero{background:linear-gradient(135deg,var(--blue-l) 0%,#fff 55%,var(--green-l) 100%);position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding-top:64px;padding-bottom:80px}
+.hero h1{font:800 clamp(2rem,4.6vw,3.2rem)/1.1 var(--h);letter-spacing:-.02em}
+.hero p{color:var(--muted);margin:16px 0 26px;max-width:46ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.bubble{position:absolute;border-radius:50%;opacity:.55;animation:drift 12s ease-in-out infinite}
+.b1{width:180px;height:180px;background:var(--blue-m);left:-50px;top:40px}
+.b2{width:120px;height:120px;background:var(--green-m);right:8%;bottom:30px;animation-delay:3s}
+@keyframes drift{50%{transform:translate(18px,-22px)}}
+
+.stage{position:relative;height:400px}
+.card{position:absolute;left:4%;top:18px;width:min(360px,86%);animation:float 5.5s ease-in-out infinite;filter:drop-shadow(0 22px 28px rgba(29,106,165,.22))}
+@keyframes float{50%{transform:translateY(-14px) rotate(1.2deg)}}
+.phone{position:absolute;right:2%;bottom:0;width:150px;animation:float 6.5s ease-in-out infinite reverse}
+.tick{stroke-dasharray:40;stroke-dashoffset:40;animation:ck 3.4s ease infinite}
+@keyframes ck{40%,100%{stroke-dashoffset:0}}
+.chip{position:absolute;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 14px;font:700 .8rem var(--h);display:flex;gap:8px;align-items:center;box-shadow:0 10px 24px rgba(22,50,74,.1);opacity:0;animation:pop 7s infinite}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--green)}
+.chip.r i{background:#e5566a}
+.c1{left:0;top:250px;animation-delay:.6s}.c2{right:0;top:8px;animation-delay:3s}.c3{left:30%;top:350px;animation-delay:5s}
+@keyframes pop{0%{opacity:0;transform:translateY(12px)}8%,40%{opacity:1;transform:none}50%,100%{opacity:0;transform:translateY(-8px)}}
+
+section{padding:78px 0}
+.head{max-width:58ch;margin-bottom:36px}
+.head h2{font:800 clamp(1.6rem,3vw,2.2rem)/1.15 var(--h);letter-spacing:-.01em}
+.head p{color:var(--muted);margin-top:10px}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;margin-top:-42px;position:relative;z-index:2}
+.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 28px rgba(29,106,165,.1)}
+.stat b{display:block;font:800 1.9rem var(--h);color:var(--blue-d)}
+.stat:nth-child(even) b{color:var(--green)}
+.stat span{color:var(--muted);font-size:.9rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:20px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;transition:transform .25s,box-shadow .25s}
+.tile:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(29,106,165,.13)}
+.tile svg{width:60px;height:60px;margin-bottom:12px}
+.tile h3{font:700 1.08rem var(--h);margin-bottom:6px}
+.tile p,.tile li{color:var(--muted);font-size:.94rem}
+.tile ul{padding-left:18px}
+
+.how{background:var(--blue-l)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px;list-style:none;padding:0;counter-reset:s;position:relative}
+.steps li{counter-increment:s;background:#fff;border-radius:18px;padding:22px;position:relative}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--green-l);color:#17724b;font:800 1rem var(--h);margin-bottom:10px;animation:pulse 3s infinite}
+.steps li:nth-child(2)::before{animation-delay:.6s}.steps li:nth-child(3)::before{animation-delay:1.2s}.steps li:nth-child(4)::before{animation-delay:1.8s}
+@keyframes pulse{0%,60%,100%{box-shadow:0 0 0 0 rgba(46,158,107,.4)}30%{box-shadow:0 0 0 10px rgba(46,158,107,0)}}
+.steps b{font:700 1.02rem var(--h)}
+.steps p{color:var(--muted);font-size:.92rem}
+
+.tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.tab{padding:8px 18px;border-radius:99px;border:1px solid var(--line);background:#fff;font:700 .88rem var(--h);color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--blue-d);border-color:var(--blue-d);color:#fff}
+.updates{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.upd{display:flex;gap:16px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;animation:fadein .5s}
+.upd[hidden]{display:none}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}}
+.upd svg{width:54px;height:54px;flex:none}
+.upd small{font-weight:600;color:var(--green)}
+.upd h3{font:700 1rem var(--h);margin:2px 0 4px}
+.upd p{color:var(--muted);font-size:.9rem}
+.new{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:var(--green-l);color:#17724b;font-size:.72rem;font-weight:800}
+
+.roles .btn{margin-top:16px}
+.cta-band{background:linear-gradient(120deg,var(--blue-m),var(--green-m));border-radius:26px;padding:40px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.cta-band h2{font:800 1.6rem var(--h)}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media(max-width:860px){
+  .hero .wrap{grid-template-columns:1fr;padding-bottom:64px}
+  .stage{height:360px;order:-1}
+  .burger{display:block}
+  .menu{display:none;position:absolute;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);flex-direction:column;padding:20px;gap:16px;align-items:flex-start}
+  .menu.open{display:flex}
+  .cta-band{padding:28px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal,.chip{opacity:1;transform:none}.tick{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="/myapp/login_page/#a">
+      <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path d="M13 1 2 5v8c0 7 5 12 11 14 6-2 11-7 11-14V5z" fill="#2b8fd6"/><path d="m8 14 4 4 7-8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      SecureBank
+    </a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <nav class="menu" id="menu" aria-label="Main">
+      <a href="#protection">Protection</a><a href="/myapp/login_page/#a">How it works</a><a href="#updates">Updates</a><a href="/myapp/login_page/#a">Sign in</a>
+      <a class="btn btn-blue" href="/myapp/bank_register/">Open account</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="padding:0">
+  <div class="bubble b1" aria-hidden="true"></div><div class="bubble b2" aria-hidden="true"></div>
+  <div class="wrap">
+    <div>
+      <h1>Banking that keeps an eye out, so you don't have to.</h1>
+      <p>SecureBank checks links before you open them, scans apps before you install them, and flags odd transfers before money leaves your account.</p>
+      <div class="cta"><a class="btn btn-blue" href="/register/">Open an account</a><a class="btn btn-green" href="#updates">See what's new</a></div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <!-- New card design -->
+      <svg class="card" viewBox="0 0 360 226">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#d4ecfb"/><stop offset="1" stop-color="#bdeed3"/></linearGradient>
+        </defs>
+        <rect width="360" height="226" rx="22" fill="url(#cg)" stroke="#fff" stroke-width="2"/>
+        <circle cx="300" cy="190" r="80" fill="#2e9e6b" opacity=".12"/><circle cx="60" cy="10" r="70" fill="#2b8fd6" opacity=".12"/>
+        <path d="M34 34 22 39v9c0 8 5 13 12 15 7-2 12-7 12-15v-9z" fill="#2b8fd6"/><path d="m28 48 4 4 7-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="56" y="52" fill="#1d6aa5" font-family="sans-serif" font-weight="800" font-size="17">SecureBank</text>
+        <rect x="262" y="30" width="68" height="22" rx="11" fill="#fff" opacity=".85"/><text x="296" y="45" text-anchor="middle" fill="#17724b" font-family="sans-serif" font-weight="700" font-size="10.5">Protected</text>
+        <rect x="30" y="82" width="46" height="34" rx="7" fill="#f5d98a"/><path d="M30 99h46M53 82v34" stroke="#c9a23f" stroke-width="1.4"/>
+        <text x="30" y="156" fill="#16324a" font-family="monospace" font-size="21" letter-spacing="3">5120 •••• •••• 4408</text>
+        <text x="30" y="198" fill="#456278" font-family="sans-serif" font-size="12.5">PRIYA NAIR</text>
+        <text x="236" y="198" fill="#456278" font-family="sans-serif" font-size="12.5">VALID 11/29</text>
+      </svg>
+      <!-- Phone -->
+      <svg class="phone" viewBox="0 0 150 280">
+        <rect x="4" y="4" width="142" height="272" rx="26" fill="#fff" stroke="#bfe0f7" stroke-width="4"/>
+        <rect x="14" y="30" width="122" height="220" rx="14" fill="#e9f5fd"/>
+        <circle cx="75" cy="105" r="36" fill="#e3f7ec"/>
+        <path d="M75 78 54 87v16c0 14 9 24 21 28 12-4 21-14 21-28V87z" fill="#2e9e6b"/>
+        <path class="tick" d="m64 105 8 8 15-17" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="30" y="160" width="90" height="10" rx="5" fill="#bfe0f7"/><rect x="30" y="180" width="64" height="10" rx="5" fill="#a9e5c3"/><rect x="30" y="206" width="90" height="24" rx="12" fill="#2b8fd6"/>
+      </svg>
+      <div class="chip c1"><i></i>Link checked: safe</div>
+      <div class="chip c2 r"><i></i>Phishing link blocked</div>
+      <div class="chip c3"><i></i>Transfer verified</div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat reveal"><b data-n="12480">0</b><span>links checked</span></div>
+    <div class="stat reveal"><b data-n="3920">0</b><span>APK files scanned</span></div>
+    <div class="stat reveal"><b data-n="318">0</b><span>fake transfers flagged</span></div>
+    <div class="stat reveal"><b data-n="41">0</b><span>traffic floods blocked</span></div>
+  </div>
+</div>
+
+<section id="protection">
+  <div class="wrap">
+    <div class="head reveal"><h2>Four protections working in the background</h2><p>Each one runs as its own service, so your banking stays fast even when one is busy.</p></div>
+    <div class="grid">
+      <article class="tile reveal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#e9f5fd"/><path d="M12 32c6-9 14-13 20-13s14 4 20 13c-6 9-14 13-20 13S18 41 12 32z" fill="#fff" stroke="#2b8fd6" stroke-width="3"/><circle cx="32" cy="32" r="7" fill="#2b8fd6"/></svg><h3>Phishing link check</h3><p>A trained model rates each link as safe or phishing before you tap it.</p></article>
+      <article class="tile reveal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#e3f7ec"/><rect x="21" y="10" width="22" height="44" rx="5" fill="#fff" stroke="#2e9e6b" stroke-width="3"/><path d="M27 30h10M32 25v10" stroke="#2e9e6b" stroke-width="3" stroke-linecap="round"/></svg><h3>App file scan</h3><p>APK files are marked clean, suspicious or malicious before install.</p></article>
+      <article class="tile reveal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#e9f5fd"/><path d="M10 42l10-12 8 8 10-16 16 14" stroke="#2b8fd6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Traffic watch</h3><p>A sandbox spots request floods and blocks the sender automatically.</p></article>
+      <article class="tile reveal"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#e3f7ec"/><path d="M32 9 15 16v14c0 11 7 20 17 24 10-4 17-13 17-24V16z" fill="#fff" stroke="#2e9e6b" stroke-width="3"/><path d="M32 23v11" stroke="#2e9e6b" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="42" r="2.6" fill="#2e9e6b"/></svg><h3>Transfer alerts</h3><p>Every transfer gets a risk score, and flagged ones are sent to you by email.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="how">
+  <div class="wrap">
+    <div class="head reveal"><h2>What happens when you check something</h2><p>The detection services have no screen of their own. You see every result here.</p></div>
+    <ol class="steps">
+      <li class="reveal"><b>You submit</b><p>A link, an APK file or a transfer.</p></li>
+      <li class="reveal"><b>Gateway routes</b><p>It goes to the right service.</p></li>
+      <li class="reveal"><b>Service decides</b><p>The model or rules give a verdict.</p></li>
+      <li class="reveal"><b>You are told</b><p>See it on your dashboard and by email.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="updates">
+  <div class="wrap">
+    <div class="head reveal"><h2>Latest updates</h2><p>New protections and improvements we have added.</p></div>
+    <div class="tabs" role="tablist" aria-label="Filter updates">
+      <button class="tab" role="tab" aria-selected="true" data-f="all">All</button>
+      <button class="tab" role="tab" aria-selected="false" data-f="security">Security</button>
+      <button class="tab" role="tab" aria-selected="false" data-f="feature">Features</button>
+    </div>
+    <div class="updates" id="upd">
+      <article class="upd" data-t="security"><svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="14" fill="#e9f5fd"/><path d="M27 10 15 15v10c0 9 5 15 12 18 7-3 12-9 12-18V15z" fill="#2b8fd6"/></svg><div><small>Oct 2026 <span class="new">New</span></small><h3>Faster link checks</h3><p>Links are now rated in under a second inside your dashboard.</p></div></article>
+      <article class="upd" data-t="security"><svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="14" fill="#e3f7ec"/><rect x="19" y="10" width="16" height="34" rx="4" fill="#2e9e6b"/></svg><div><small>Sep 2026</small><h3>Deeper APK scanning</h3><p>Files that ask for unusual permissions are now marked suspicious.</p></div></article>
+      <article class="upd" data-t="feature"><svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="14" fill="#e3f7ec"/><path d="M12 36l9-10 7 6 14-16" stroke="#2e9e6b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><small>Sep 2026</small><h3>Email alerts for flagged items</h3><p>Get an email when a transfer, link or file is flagged.</p></div></article>
+      <article class="upd" data-t="security"><svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="14" fill="#e9f5fd"/><path d="M10 38l9-12 8 7 12-17" stroke="#2b8fd6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><small>Aug 2026</small><h3>Automatic blocking of floods</h3><p>Users sending nonstop requests are blocked and the admin is told.</p></div></article>
+      <article class="upd" data-t="feature"><svg viewBox="0 0 54 54" aria-hidden="true"><rect width="54" height="54" rx="14" fill="#e9f5fd"/><rect x="11" y="16" width="32" height="22" rx="5" fill="#2b8fd6"/><rect x="11" y="22" width="32" height="5" fill="#fff" opacity=".7"/></svg><div><small>Jul 2026</small><h3>New SecureBank card look</h3><p>A fresh card design with a clear Protected badge.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="roles" style="padding-top:0">
+  <div class="wrap">
+    <div class="head reveal"><h2>Sign in to your area</h2></div>
+    <div class="grid roles">
+      <div class="tile reveal"><h3>User</h3><ul><li>Send money and see balance</li><li>Check links and APK files</li></ul><a class="btn btn-blue" href="/user/login/">User login</a></div>
+      <div class="tile reveal"><h3>Bank</h3><ul><li>Manage accounts</li><li>Act on flagged transactions</li></ul><a class="btn btn-blue" href="/bank/login/">Bank login</a></div>
+      <div class="tile reveal"><h3>Admin</h3><ul><li>Onboard banks</li><li>See all alerts and unblock users</li></ul><a class="btn btn-blue" href="/admin-login/">Admin login</a></div>
+    </div>
+    <div class="cta-band reveal" style="margin-top:44px"><h2>Ready to bank with protection built in?</h2><a class="btn btn-blue" href="/register/">Open an account</a></div>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>&copy; <span id="yr"></span> SecureBank</span><span>Django, Spring Cloud and sandbox monitoring</span></div></footer>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+const burger=document.getElementById('burger'),menu=document.getElementById('menu');
+burger.onclick=()=>{const o=menu.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
+menu.querySelectorAll('a').forEach(a=>a.onclick=()=>{menu.classList.remove('open');burger.setAttribute('aria-expanded',false)});
+
+const count=el=>{const n=+el.dataset.n,s=performance.now();
+  (function f(now){const p=Math.min((now-s)/1400,1);el.textContent=Math.floor(n*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(f)})(s)};
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');
+  const b=e.target.querySelector('[data-n]');if(b)count(b);io.unobserve(e.target)}}),{threshold:.2});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// update filters
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
+  document.querySelectorAll('.upd').forEach(u=>u.hidden=!(t.dataset.f==='all'||u.dataset.t===t.dataset.f));
+});
+</script>
+</body>
+</html>

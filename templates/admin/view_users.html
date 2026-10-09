@@ -1,0 +1,207 @@
+{% extends 'admin/home sub.html' %}
+{% block body %}<html>
+<head>
+
+    <title>View Users</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .container {
+            width: 92%;
+            margin: 40px auto;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f1f3f5;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .blocked {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .inactive {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .unblock-btn {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .unblock-btn:hover {
+            background: #218838;
+        }
+
+        .disabled-btn {
+            background: #aaa;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>View Users</h1>
+
+    <div class="card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Bank</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for user in users %}
+
+                <tr>
+
+                    <td>{{ user.full_name }}</td>
+
+                    <td>{{ user.email }}</td>
+
+                    <td>{{ user.phone }}</td>
+
+                    <td>{{ user.bank.bank_name }}</td>
+
+                    <td>
+
+                        {% if user.status == "Pending" %}
+
+                            <span class="status pending">
+                                Pending
+                            </span>
+
+                        {% elif user.status == "Active" %}
+
+                            <span class="status active">
+                                Active
+                            </span>
+
+                        {% elif user.status == "Blocked" %}
+
+                            <span class="status blocked">
+                                Blocked
+                            </span>
+
+                        {% elif user.status == "Inactive" %}
+
+                            <span class="status inactive">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if user.status == "Blocked" %}
+
+                            <a href="{% url 'unblock_user' user.id %}"
+                               class="unblock-btn"
+                               onclick="return confirm('Are you sure you want to unblock this user?');">
+                                Unblock
+                            </a>
+
+                        {% else %}
+
+                            <span class="disabled-btn">
+                                No Action
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6">
+                        No users found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+
+{% endblock %}
