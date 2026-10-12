@@ -1,0 +1,290 @@
+{% extends 'bank/bank home sub.html' %}
+
+{% block body %}<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Malware Scan Reports – SecureBank</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--blue-l:#e9f5fd;--blue-m:#bfe0f7;--blue:#2b8fd6;--blue-d:#1d6aa5;--green-l:#e3f7ec;--green-m:#a9e5c3;--green:#2e9e6b;--red:#c0392b;--red-l:#fdecea;--red-m:#f3c3be;--amber:#b7791f;--amber-l:#fff4dc;--ink:#16324a;--muted:#5d7388;--line:#dbe9f2;--h:'Manrope',system-ui,sans-serif;--b:'Nunito Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--b);color:var(--ink);min-height:100vh;background:linear-gradient(160deg,#f5f9fc,#fff 40%,#f1faf5);line-height:1.55}
+a{color:var(--blue-d)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1180px;margin:0 auto;padding:20px 18px 0}
+.logo{display:flex;align-items:center;gap:8px;font:800 1.2rem var(--h);color:var(--blue-d);text-decoration:none}
+.back{font:700 .88rem var(--h);text-decoration:none;color:var(--muted);padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.back:hover{color:var(--blue-d);border-color:var(--blue-m)}
+.wrap{max-width:1180px;margin:18px auto 40px;padding:0 18px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:center;padding:26px 32px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(120deg,var(--blue-l),#fff 55%,var(--green-l));box-shadow:0 14px 36px rgba(29,106,165,.08);margin-bottom:22px;overflow:hidden}
+.hero h1{font:800 1.7rem/1.15 var(--h);letter-spacing:-.01em}
+.hero p{color:var(--muted);margin-top:6px;max-width:46ch;font-size:.94rem}
+.btn{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:12px 22px;border-radius:12px;background:var(--blue-d);color:#fff;font:800 .92rem var(--h);text-decoration:none;border:0;cursor:pointer;box-shadow:0 8px 20px rgba(29,106,165,.22);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.art{width:100%;max-width:260px;justify-self:end}
+.fl{animation:fl 5s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-8px)}}
+.fl2{animation:fl 6s ease-in-out infinite reverse}
+
+.msg{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:.92rem;background:var(--green-l);color:#17724b;border:1px solid var(--green-m)}
+.msg.error{background:var(--red-l);color:var(--red);border-color:var(--red-m)}
+.msg button{background:none;border:0;font-size:1.2rem;line-height:1;cursor:pointer;color:inherit;opacity:.7}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.stat .ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;flex:none}
+.stat b{display:block;font:800 1.7rem/1.1 var(--h)}
+.stat span{color:var(--muted);font-size:.85rem}
+.s-blue .ic{background:var(--blue-l);color:var(--blue-d)}.s-green .ic{background:var(--green-l);color:var(--green)}.s-red .ic{background:var(--red-l);color:var(--red)}.s-amber .ic{background:var(--amber-l);color:var(--amber)}
+
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:22px;overflow:hidden}
+.pad{padding:20px 22px}
+
+/* filters */
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:14px;align-items:end}
+.filters label{display:block;font:700 .8rem var(--h);margin-bottom:6px;color:var(--muted)}
+.filters input,.filters select{width:100%;height:44px;border:1.5px solid var(--line);border-radius:12px;padding:0 13px;font:inherit;font-size:.92rem;color:var(--ink);background:#fff;outline:0;transition:border-color .2s,box-shadow .2s}
+.filters input:focus,.filters select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(43,143,214,.15)}
+.fbtn{display:flex;gap:8px}
+.fbtn .btn{margin:0;height:44px;padding:0 20px}
+.reset{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--muted);font:700 .88rem var(--h);text-decoration:none}
+.reset:hover{color:var(--blue-d);border-color:var(--blue-m)}
+
+/* table */
+.thead{padding:20px 22px;border-bottom:1px solid var(--line)}
+.thead h2{font:800 1.05rem var(--h)}
+.thead p{color:var(--muted);font-size:.86rem;margin-top:2px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:900px}
+th{text-align:left;font:700 .78rem var(--h);color:var(--muted);padding:12px 14px;background:#f9fcfe;border-bottom:2px solid var(--line);white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+td{padding:14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover td{background:#f9fcfe}
+.fname{font-weight:700;overflow-wrap:anywhere;max-width:220px}
+.hash{font-family:ui-monospace,Menlo,monospace;font-size:.72rem;color:var(--muted);overflow-wrap:anywhere;max-width:190px}
+.pill{display:inline-block;padding:3px 11px;border-radius:99px;font:800 .72rem var(--h);white-space:nowrap}
+.ok{background:var(--green-l);color:#17724b}.bad{background:var(--red-l);color:var(--red)}.warn{background:var(--amber-l);color:var(--amber)}.info{background:var(--blue-l);color:var(--blue-d)}
+.t-apk{background:var(--green-l);color:#17724b}.t-exe{background:var(--blue-l);color:var(--blue-d)}
+.score{min-width:92px}
+.score b{font:800 .9rem var(--h)}
+.score p{height:6px;border-radius:6px;background:var(--blue-l);overflow:hidden;margin-top:5px}
+.score i{display:block;height:100%;border-radius:6px;animation:wide 1s}
+.score .ok i,.score.ok i{background:var(--green)}.score.warn i{background:var(--amber)}.score.bad i{background:var(--red)}.score.info i{background:var(--blue)}
+@keyframes wide{from{width:0!important}}
+.st{display:inline-flex;align-items:center;gap:6px;font:700 .86rem var(--h)}
+.st::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.st.completed{color:var(--green)}.st.failed{color:var(--red)}.st.pending{color:var(--amber)}
+.st.pending::before{animation:pl 1.6s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(183,121,31,.5)}100%{box-shadow:0 0 0 8px rgba(183,121,31,0)}}
+.date small{display:block;color:var(--muted);font-size:.78rem}
+.view{display:inline-block;padding:8px 14px;border-radius:10px;background:var(--blue-d);color:#fff;font:700 .8rem var(--h);text-decoration:none;white-space:nowrap}
+.view:hover{filter:brightness(1.08)}
+
+/* empty */
+.empty{text-align:center;padding:44px 20px}
+.empty svg{width:120px;margin-bottom:10px}
+.empty h3{font:800 1.1rem var(--h)}
+.empty p{color:var(--muted);margin-top:4px}
+.empty .btn{margin-top:14px}
+.foot{text-align:center;color:var(--muted);font-size:.82rem;padding-top:6px}
+
+@media(max-width:1000px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .filters{grid-template-columns:1fr 1fr}
+  .filters .q{grid-column:1/-1}
+  .fbtn{grid-column:1/-1}
+}
+@media(max-width:760px){
+  .hero{grid-template-columns:1fr;padding:22px}
+  .art{justify-self:center;max-width:200px;order:-1}
+  /* table becomes cards */
+  table{min-width:0}
+  thead{display:none}
+  tbody tr{display:block;margin:12px;border:1px solid var(--line);border-radius:14px;padding:6px 14px}
+  tbody tr:hover td{background:none}
+  td{display:flex;justify-content:space-between;align-items:center;gap:14px;border:0;border-bottom:1px solid var(--line);padding:10px 0;text-align:right}
+  td:last-child{border:0}
+  td::before{content:attr(data-label);font:700 .76rem var(--h);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;text-align:left;flex:none}
+  td.none{display:block;text-align:center}td.none::before{display:none}
+  .fname,.hash{max-width:60%;text-align:right}
+}
+@media(max-width:480px){.stats{grid-template-columns:1fr}.filters{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6zM12 9v4M12 16h.01"/></symbol>
+  <symbol id="i-fail" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
+
+<div class="bar">
+  <a class="logo" href="/myapp/bank_home/">
+    <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path d="M13 1 2 5v8c0 7 5 12 11 14 6-2 11-7 11-14V5z" fill="#2b8fd6"/><path d="m8 14 4 4 7-8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    SecureBank
+  </a>
+{#  <a class="" href="/myapp/bank_home/">&larr; Back to dashboard</a>#}
+</div>
+
+<div class="wrap">
+
+  <!-- hero -->
+  <div class="hero">
+    <div>
+      <h1>Malware Scan Reports</h1>
+      <p>The history of every APK and Windows EXE file analysed in the SecureBank sandbox, with its verdict and threat score.</p>
+      <a class="btn" href="{% url 'upload_and_sandbox_apk' %}"><svg class="i" style="width:18px;height:18px"><use href="#i-plus"/></svg>Upload New File</a>
+    </div>
+    <svg class="art" viewBox="0 0 260 200" aria-hidden="true">
+      <g class="fl2"><rect x="30" y="34" width="120" height="146" rx="14" fill="#fff" stroke="#bfe0f7" stroke-width="3" transform="rotate(-7 90 107)"/></g>
+      <g class="fl"><rect x="62" y="22" width="128" height="156" rx="14" fill="#fff" stroke="#bfe0f7" stroke-width="3"/>
+        <rect x="80" y="44" width="70" height="10" rx="5" fill="#dbe9f2"/>
+        <rect x="80" y="66" width="92" height="7" rx="3.5" fill="#e9f5fd"/><rect x="80" y="82" width="80" height="7" rx="3.5" fill="#e9f5fd"/>
+        <rect x="80" y="104" width="30" height="16" rx="8" fill="#a9e5c3"/><rect x="116" y="104" width="30" height="16" rx="8" fill="#f3c3be"/>
+        <rect x="80" y="132" width="92" height="7" rx="3.5" fill="#e9f5fd"/><rect x="80" y="148" width="60" height="7" rx="3.5" fill="#e9f5fd"/></g>
+      <g class="fl2"><path d="M196 96 164 109v22c0 21 14 35 32 42 18-7 32-21 32-42v-22z" fill="#2e9e6b"/><path d="m180 131 11 11 20-23" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="msg {{ message.tags }}" role="alert"><span>{{ message }}</span><button type="button" aria-label="Dismiss" onclick="this.parentNode.remove()">&times;</button></div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- summary -->
+  <div class="stats">
+    <div class="stat s-blue"><div class="ic"><svg class="i"><use href="#i-doc"/></svg></div><div><b>{{ total_reports|default:0 }}</b><span>Total scans</span></div></div>
+    <div class="stat s-green"><div class="ic"><svg class="i"><use href="#i-check"/></svg></div><div><b>{{ completed_reports|default:0 }}</b><span>Completed</span></div></div>
+    <div class="stat s-red"><div class="ic"><svg class="i"><use href="#i-bug"/></svg></div><div><b>{{ malicious_reports|default:0 }}</b><span>Malicious</span></div></div>
+    <div class="stat s-amber"><div class="ic"><svg class="i"><use href="#i-fail"/></svg></div><div><b>{{ failed_reports|default:0 }}</b><span>Failed scans</span></div></div>
+  </div>
+
+  <!-- search and filters -->
+  <div class="box pad">
+    <form method="GET" action="{% url 'view_apk_reports' %}">
+      <div class="filters">
+        <div class="q">
+          <label for="q">Search</label>
+          <input type="search" id="q" name="q" value="{{ search_query }}" placeholder="File name, hash or verdict">
+        </div>
+        <div>
+          <label for="file_type">File type</label>
+          <select id="file_type" name="file_type">
+            <option value="">All</option>
+            <option value="apk" {% if file_filter == 'apk' %}selected{% endif %}>APK</option>
+            <option value="exe" {% if file_filter == 'exe' %}selected{% endif %}>EXE</option>
+          </select>
+        </div>
+        <div>
+          <label for="result">Verdict</label>
+          <select id="result" name="result">
+            <option value="">All</option>
+            <option value="Clean" {% if result_filter == 'Clean' %}selected{% endif %}>Clean</option>
+            <option value="Suspicious" {% if result_filter == 'Suspicious' %}selected{% endif %}>Suspicious</option>
+            <option value="Malicious" {% if result_filter == 'Malicious' %}selected{% endif %}>Malicious</option>
+          </select>
+        </div>
+        <div>
+          <label for="status">Scan status</label>
+          <select id="status" name="status">
+            <option value="">All</option>
+            <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+            <option value="Failed" {% if status_filter == 'Failed' %}selected{% endif %}>Failed</option>
+          </select>
+        </div>
+        <div class="fbtn">
+          <button type="submit" class="btn">Search</button>
+          <a href="{% url 'view_apk_reports' %}" class="reset">Reset</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- reports table -->
+  <div class="box">
+    <div class="thead">
+      <h2>Scan History</h2>
+      <p>Select View Details to inspect an individual report.</p>
+    </div>
+
+    <div class="tbl">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>File name</th><th>File type</th><th>SHA-256</th><th>Verdict</th><th>Threat score</th><th>Status</th><th>Date</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for report in reports %}
+          <tr>
+            <td data-label="ID">{{ report.id }}</td>
+
+            <td data-label="File name"><div class="fname">{{ report.apk_file.name|cut:"apk_files/" }}</div></td>
+
+            <td data-label="File type">
+              {% if report.apk_file.name|lower|slice:"-4:" == ".exe" %}<span class="pill t-exe">EXE</span>{% else %}<span class="pill t-apk">APK</span>{% endif %}
+            </td>
+
+            <td data-label="SHA-256"><div class="hash">{{ report.file_hash|default:"Not available" }}</div></td>
+
+            <td data-label="Verdict">
+              {% if report.scan_result == "Clean" %}<span class="pill ok">CLEAN</span>
+              {% elif report.scan_result == "Malicious" %}<span class="pill bad">MALICIOUS</span>
+              {% elif report.scan_result %}<span class="pill warn">{{ report.scan_result|upper }}</span>
+              {% else %}<span class="pill info">PENDING</span>{% endif %}
+            </td>
+
+            <td data-label="Threat score">
+              {% if report.confidence_score %}
+              <!-- bar assumes the score is 0 to 100 -->
+              <div class="score {% if report.scan_result == 'Clean' %}ok{% elif report.scan_result == 'Malicious' %}bad{% elif report.scan_result %}warn{% else %}info{% endif %}">
+                <b>{{ report.confidence_score }}</b>
+                <p><i style="width:{{ report.confidence_score }}%"></i></p>
+              </div>
+              {% else %}<span style="color:var(--muted)">N/A</span>{% endif %}
+            </td>
+
+            <td data-label="Status">
+              {% if report.status == "Completed" %}<span class="st completed">Completed</span>
+              {% elif report.status == "Failed" %}<span class="st failed">Failed</span>
+              {% else %}<span class="st pending">{{ report.status }}</span>{% endif %}
+            </td>
+
+            <td data-label="Date" class="date">{{ report.created_at|date:"d M Y" }}<small>{{ report.created_at|date:"h:i A" }}</small></td>
+
+            <td data-label="Action"><a class="view" href="{% url 'view_apk_report_detail' report_id=report.id %}">View Details</a></td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="9" class="none">
+              <div class="empty">
+                <svg viewBox="0 0 120 100" aria-hidden="true"><rect x="22" y="14" width="64" height="76" rx="9" fill="#fff" stroke="#bfe0f7" stroke-width="3"/><rect x="34" y="30" width="34" height="6" rx="3" fill="#dbe9f2"/><rect x="34" y="44" width="40" height="5" rx="2.5" fill="#e9f5fd"/><rect x="34" y="56" width="30" height="5" rx="2.5" fill="#e9f5fd"/><circle cx="82" cy="66" r="18" fill="#fff" fill-opacity=".8" stroke="#1d6aa5" stroke-width="5"/><path d="M95 79 108 92" stroke="#1d6aa5" stroke-width="7" stroke-linecap="round"/></svg>
+                <h3>No reports found</h3>
+                <p>Upload a file or change the filters.</p>
+                <a class="btn" href="{% url 'upload_and_sandbox_apk' %}">Upload File</a>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot">SecureBank &copy; {% now "Y" %} · Malware Analysis Platform</div>
+</div>
+
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends 'bank/bank home sub.html' %}
+{% load l10n %}
+{% block body %}
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+.rd{--blue-l:#e9f5fd;--blue-m:#bfe0f7;--blue:#2b8fd6;--blue-d:#1d6aa5;--green-l:#e3f7ec;--green-m:#a9e5c3;--green:#2e9e6b;--red:#c0392b;--red-l:#fdecea;--red-m:#f3c3be;--amber:#b7791f;--amber-l:#fff4dc;--amber-m:#f4dba5;--ink:#16324a;--muted:#5d7388;--line:#dbe9f2;font-family:'Nunito Sans',system-ui,sans-serif;color:var(--ink);padding:26px 16px 40px;line-height:1.55;background:linear-gradient(160deg,#f5f9fc,#fff 40%,#f1faf5)}
+.rd *{box-sizing:border-box}
+.rd h1,.rd h2,.rd h3,.rd .hd{font-family:'Manrope',system-ui,sans-serif}
+.rd-wrap{max-width:960px;margin:0 auto}
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* top row */
+.rd-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.rd-crumb{font-size:.86rem;color:var(--muted)}
+.rd-crumb a{color:var(--blue-d);text-decoration:none;font-weight:700}
+.rd-back{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--muted);font:700 .88rem 'Manrope',sans-serif;text-decoration:none}
+.rd-back:hover{color:var(--blue-d);border-color:var(--blue-m)}
+
+/* verdict hero */
+.rd-hero{display:grid;grid-template-columns:96px 1fr auto;gap:22px;align-items:center;border-radius:22px;padding:26px 30px;border:1px solid var(--line);margin-bottom:22px;box-shadow:0 14px 36px rgba(29,106,165,.08)}
+.rd-hero.v-ok{background:linear-gradient(120deg,var(--green-l),#fff);border-color:var(--green-m)}
+.rd-hero.v-bad{background:linear-gradient(120deg,var(--red-l),#fff);border-color:var(--red-m)}
+.rd-hero.v-warn{background:linear-gradient(120deg,var(--amber-l),#fff);border-color:var(--amber-m)}
+.rd-hero.v-info{background:linear-gradient(120deg,var(--blue-l),#fff);border-color:var(--blue-m)}
+.rd-big{width:92px;height:92px;animation:rdFloat 5s ease-in-out infinite}
+.v-bad .rd-big{animation:rdShake 1.4s ease 2}
+@keyframes rdFloat{50%{transform:translateY(-6px)}}
+@keyframes rdShake{0%,100%{transform:rotate(0)}20%{transform:rotate(-6deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(4deg)}}
+.rd-tick{stroke-dasharray:40;stroke-dashoffset:40;animation:rdTick 1s .2s ease forwards}
+@keyframes rdTick{to{stroke-dashoffset:0}}
+.rd-hero h1{font-size:1.5rem;font-weight:800;line-height:1.15;letter-spacing:-.01em}
+.v-ok h1{color:#17724b}.v-bad h1{color:var(--red)}.v-warn h1{color:var(--amber)}.v-info h1{color:var(--blue-d)}
+.rd-hero p{color:var(--muted);margin:6px 0 0;font-size:.92rem}
+.rd-fname{display:flex;align-items:center;gap:8px;margin-top:12px;font:700 .9rem 'Manrope',sans-serif;overflow-wrap:anywhere}
+.rd-fname svg{color:var(--blue-d)}
+
+/* score gauge */
+.rd-gauge{position:relative;width:118px;height:118px;text-align:center}
+.rd-gauge svg{width:118px;height:118px;transform:rotate(-90deg)}
+.rd-gauge circle{fill:none;stroke-width:10;stroke-linecap:round}
+.rd-gauge .tr{stroke:#fff;opacity:.9}
+.rd-gauge .pg{animation:rdG 1.2s ease}
+.v-ok .pg{stroke:var(--green)}.v-bad .pg{stroke:var(--red)}.v-warn .pg{stroke:var(--amber)}.v-info .pg{stroke:var(--blue)}
+@keyframes rdG{from{stroke-dasharray:0 100}}
+.rd-gauge div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rd-gauge b{font:800 1.5rem/1 'Manrope',sans-serif}
+.rd-gauge small{font-size:.7rem;color:var(--muted);margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* cards */
+.rd-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:22px}
+.rd-title{display:flex;align-items:center;gap:10px;font-size:1.05rem;font-weight:800;margin:0 0 18px}
+.rd-title .ti{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--blue-l);color:var(--blue-d)}
+.rd-title .ti.g{background:var(--green-l);color:var(--green)}
+.rd-title .ti.a{background:var(--amber-l);color:var(--amber)}
+
+.rd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rd-item{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:14px;background:#f9fcfe;min-width:0}
+.rd-item .ii{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--blue-l);color:var(--blue-d);flex:none}
+.rd-item.g .ii{background:var(--green-l);color:var(--green)}
+.rd-item.a .ii{background:var(--amber-l);color:var(--amber)}
+.rd-item.r .ii{background:var(--red-l);color:var(--red)}
+.rd-lab{font:700 .72rem 'Manrope',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.rd-val{font-weight:700;overflow-wrap:anywhere;font-size:.93rem}
+.rd-item.wide{grid-column:span 2}
+
+.pill{display:inline-block;padding:3px 12px;border-radius:99px;font:800 .74rem 'Manrope',sans-serif}
+.p-ok{background:var(--green-l);color:#17724b}.p-bad{background:var(--red-l);color:var(--red)}.p-warn{background:var(--amber-l);color:var(--amber)}.p-info{background:var(--blue-l);color:var(--blue-d)}
+
+.rd-block{margin-top:18px}
+.rd-bl{display:flex;align-items:center;gap:8px;font:800 .8rem 'Manrope',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.rd-box{background:#f9fcfe;border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-wrap:anywhere;white-space:pre-wrap;font-size:.9rem}
+.rd-mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem}
+.rd-log{max-height:320px;overflow:auto}
+.rd-hash{display:flex;gap:10px;align-items:center}
+.rd-hash .rd-box{flex:1;margin:0}
+.rd-copy{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 13px;font:700 .8rem 'Manrope',sans-serif;color:var(--blue-d);cursor:pointer;flex:none}
+.rd-copy:hover{border-color:var(--blue-m);background:var(--blue-l)}
+
+/* sandbox */
+.rd-sb{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:14px;padding:16px 18px;margin-bottom:14px;background:#fff}
+.rd-sbh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.rd-sbh strong{display:flex;align-items:center;gap:8px;font:800 .95rem 'Manrope',sans-serif}
+.rd-sbh small{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.82rem}
+.rd-env{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:.88rem}
+.rd-env svg{color:var(--blue-d)}
+.rd-empty{display:flex;gap:16px;align-items:center;padding:18px;border-radius:14px;background:var(--blue-l);border:1px solid var(--blue-m);color:var(--blue-d);font-size:.92rem}
+.rd-empty svg.il{width:70px;flex:none}
+
+.rd-note{display:flex;gap:12px;padding:15px 18px;border-radius:14px;background:var(--amber-l);border:1px solid var(--amber-m);color:#8a5a14;font-size:.88rem;margin-bottom:22px}
+.rd-note svg{margin-top:2px}
+.rd-end{text-align:center}
+.rd-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;background:var(--blue-d);color:#fff;font:800 .95rem 'Manrope',sans-serif;text-decoration:none;box-shadow:0 8px 20px rgba(29,106,165,.22);transition:transform .2s}
+.rd-btn:hover{transform:translateY(-2px)}
+.rd a:focus-visible,.rd button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+@media(max-width:820px){
+  .rd-hero{grid-template-columns:80px 1fr;padding:22px}
+  .rd-gauge{grid-column:1/-1;justify-self:center}
+  .rd-big{width:76px;height:76px}
+  .rd-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+  .rd-grid{grid-template-columns:1fr}
+  .rd-item.wide{grid-column:auto}
+  .rd-hero{grid-template-columns:1fr;text-align:center}
+  .rd-big{margin:0 auto}
+  .rd-fname{justify-content:center}
+  .rd-hash{flex-direction:column;align-items:stretch}
+  .rd-card{padding:18px}
+}
+@media(prefers-reduced-motion:reduce){.rd *{animation:none!important;transition:none!important}.rd-tick{stroke-dashoffset:0}}
+</style>
+
+<!-- icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="d-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5"/></symbol>
+  <symbol id="d-type" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></symbol>
+  <symbol id="d-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="d-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="d-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2.2 2.2L15 10"/></symbol>
+  <symbol id="d-alert" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6zM12 9v4M12 16h.01"/></symbol>
+  <symbol id="d-gauge" viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0M12 18l4-5"/></symbol>
+  <symbol id="d-hash" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10 3 8 21M16 3l-2 18"/></symbol>
+  <symbol id="d-brain" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="d-term" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 10 3 2-3 2M12 15h5"/></symbol>
+  <symbol id="d-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="d-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></symbol>
+  <symbol id="d-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+  <symbol id="d-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="d-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="d-warn" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></symbol>
+</svg>
+
+<div class="rd">
+  <div class="rd-wrap">
+
+    <div class="rd-top">
+      <div class="rd-crumb"><a href="{% url 'view_apk_reports' %}">Malware Scan Reports</a> &rsaquo; Report #{{ report.id }}</div>
+{#      <a href="{% url 'view_apk_reports' %}" class="rd-back"><svg class="ic"><use href="#d-back"/></svg>Back to Reports</a>#}
+    </div>
+
+    <!-- ============ VERDICT HERO ============ -->
+    <div class="rd-hero {% if report.status == 'Failed' %}v-warn{% elif report.scan_result == 'Clean' %}v-ok{% elif report.scan_result == 'Malicious' %}v-bad{% elif report.scan_result %}v-warn{% else %}v-info{% endif %}">
+
+      {% if report.status == 'Failed' %}
+        <svg class="rd-big" viewBox="0 0 104 120" aria-hidden="true"><path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z" fill="#b7791f"/><path d="m36 44 32 32M68 44 36 76" stroke="#fff" stroke-width="8" stroke-linecap="round"/></svg>
+        <div><h1>Scan failed</h1><p>The analysis could not be completed. This file has not been checked, so do not treat it as safe.</p>
+      {% elif report.scan_result == 'Clean' %}
+        <svg class="rd-big" viewBox="0 0 104 120" aria-hidden="true"><path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z" fill="#2e9e6b"/><path class="rd-tick" d="m32 58 14 14 26-30" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><h1>No threats found</h1><p>The sandbox did not find harmful behaviour in this file.</p>
+      {% elif report.scan_result == 'Malicious' %}
+        <svg class="rd-big" viewBox="0 0 104 120" aria-hidden="true"><path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z" fill="#c0392b"/><path d="M52 36v34" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="52" cy="88" r="6" fill="#fff"/></svg>
+        <div><h1>Malicious file detected</h1><p>Do not install or run this file. Delete it and tell your administrator.</p>
+      {% elif report.scan_result %}
+        <svg class="rd-big" viewBox="0 0 104 120" aria-hidden="true"><path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z" fill="#b7791f"/><path d="M52 36v34" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="52" cy="88" r="6" fill="#fff"/></svg>
+        <div><h1>{{ report.scan_result }} behaviour found</h1><p>Some behaviour in this file needs care. Avoid installing it until it has been reviewed.</p>
+      {% else %}
+        <svg class="rd-big" viewBox="0 0 104 120" aria-hidden="true"><path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z" fill="#2b8fd6"/><circle cx="52" cy="58" r="22" fill="none" stroke="#fff" stroke-width="7"/><path d="M52 44v15l10 6" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/></svg>
+        <div><h1>Analysis in progress</h1><p>The sandbox has not finished yet. Check this page again in a few minutes.</p>
+      {% endif %}
+          <div class="rd-fname"><svg class="ic"><use href="#d-file"/></svg>{{ report.apk_file.name|default:"Not available" }}</div>
+        </div>
+
+      <div class="rd-gauge" role="img" aria-label="Threat score {{ report.confidence_score|default:'not available' }}">
+        <svg viewBox="0 0 120 120"><circle class="tr" cx="60" cy="60" r="50"/><circle class="pg" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="{{ report.confidence_score|default:0|unlocalize }} 100"/></svg>
+        <div><b>{{ report.confidence_score|default:"N/A" }}</b><small>Threat score</small></div>
+      </div>
+    </div>
+
+    <!-- ============ FILE INFORMATION ============ -->
+    <div class="rd-card">
+      <h2 class="rd-title"><span class="ti"><svg class="ic"><use href="#d-file"/></svg></span>File Information</h2>
+
+      <div class="rd-grid">
+        <div class="rd-item wide"><span class="ii"><svg class="ic"><use href="#d-file"/></svg></span><div><div class="rd-lab">File name</div><div class="rd-val">{{ report.apk_file.name|default:"Not available" }}</div></div></div>
+
+        <div class="rd-item g"><span class="ii"><svg class="ic"><use href="#d-type"/></svg></span><div><div class="rd-lab">File type</div><div class="rd-val">{% if report.apk_file.name|lower|slice:"-4:" == ".exe" %}Windows Executable (EXE){% else %}Android Package (APK){% endif %}</div></div></div>
+
+        <div class="rd-item {% if report.scan_result == 'Clean' %}g{% elif report.scan_result == 'Malicious' %}r{% elif report.scan_result %}a{% endif %}"><span class="ii"><svg class="ic"><use href="#{% if report.scan_result == 'Clean' %}d-shield{% else %}d-alert{% endif %}"/></svg></span><div><div class="rd-lab">Scan verdict</div>
+          <div class="rd-val">{% if report.scan_result == 'Clean' %}<span class="pill p-ok">CLEAN</span>{% elif report.scan_result == 'Malicious' %}<span class="pill p-bad">MALICIOUS</span>{% elif report.scan_result %}<span class="pill p-warn">{{ report.scan_result|upper }}</span>{% else %}<span class="pill p-info">PENDING</span>{% endif %}</div></div></div>
+
+        <div class="rd-item"><span class="ii"><svg class="ic"><use href="#d-gauge"/></svg></span><div><div class="rd-lab">Threat score</div><div class="rd-val">{{ report.confidence_score|default:"Not available" }}</div></div></div>
+
+        <div class="rd-item {% if report.status == 'Completed' %}g{% elif report.status == 'Failed' %}r{% else %}a{% endif %}"><span class="ii"><svg class="ic"><use href="#d-clock"/></svg></span><div><div class="rd-lab">Processing status</div>
+          <div class="rd-val">{% if report.status == 'Completed' %}<span class="pill p-ok">Completed</span>{% elif report.status == 'Failed' %}<span class="pill p-bad">Failed</span>{% else %}<span class="pill p-warn">{{ report.status }}</span>{% endif %}</div></div></div>
+
+        <div class="rd-item"><span class="ii"><svg class="ic"><use href="#d-cal"/></svg></span><div><div class="rd-lab">Upload date</div><div class="rd-val">{{ report.created_at|date:"d M Y, h:i A" }}</div></div></div>
+      </div>
+
+      <div class="rd-block">
+        <div class="rd-bl"><svg class="ic"><use href="#d-hash"/></svg>SHA-256 hash</div>
+        <div class="rd-hash">
+          <div class="rd-box rd-mono" id="rdHash">{{ report.file_hash|default:"Not available" }}</div>
+          {% if report.file_hash %}<button type="button" class="rd-copy" onclick="rdCopy(this)"><svg class="ic" style="width:16px;height:16px"><use href="#d-copy"/></svg><span>Copy</span></button>{% endif %}
+        </div>
+      </div>
+
+      <div class="rd-block">
+        <div class="rd-bl"><svg class="ic"><use href="#d-brain"/></svg>Prediction result</div>
+        <div class="rd-box">{{ report.prediction_result|default:"No prediction result available." }}</div>
+      </div>
+
+      <div class="rd-block">
+        <div class="rd-bl"><svg class="ic"><use href="#d-term"/></svg>Analysis reason and execution logs</div>
+        <div class="rd-box rd-mono rd-log">{{ report.reason|default:"No analysis details available." }}</div>
+      </div>
+    </div>
+
+    <!-- ============ SANDBOX REPORTS ============ -->
+    <div class="rd-card">
+      <h2 class="rd-title"><span class="ti g"><svg class="ic"><use href="#d-box"/></svg></span>Sandbox Analysis Reports</h2>
+
+      {% for sandbox in sandbox_reports %}
+        <div class="rd-sb">
+          <div class="rd-sbh">
+            <strong><svg class="ic" style="color:var(--blue-d)"><use href="#d-box"/></svg>{{ sandbox.sandbox_status }}</strong>
+            <small><svg class="ic" style="width:15px;height:15px"><use href="#d-cal"/></svg>{{ sandbox.timestamp|date:"d M Y, h:i A" }}</small>
+          </div>
+
+          <div class="rd-bl"><svg class="ic"><use href="#d-term"/></svg>Behaviour summary</div>
+          <div class="rd-box">{{ sandbox.behaviour_summary|default:"No behaviour summary available." }}</div>
+
+          <div class="rd-env"><svg class="ic"><use href="#d-server"/></svg><span><strong>Execution environment:</strong> {{ sandbox.executed_on_server|default:"Not specified" }}</span></div>
+        </div>
+      {% empty %}
+        <div class="rd-empty">
+          <svg class="il" viewBox="0 0 70 70" aria-hidden="true"><rect x="8" y="14" width="46" height="46" rx="9" fill="#fff" stroke="#bfe0f7" stroke-width="3" stroke-dasharray="6 5"/><circle cx="46" cy="44" r="13" fill="#fff" fill-opacity=".8" stroke="#1d6aa5" stroke-width="4"/><path d="M55 53 64 62" stroke="#1d6aa5" stroke-width="5" stroke-linecap="round"/></svg>
+          <div>No sandbox report is available for this scan. The analysis may have failed or not completed.</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="rd-note">
+      <svg class="ic" style="width:22px;height:22px"><use href="#d-warn"/></svg>
+      <div><strong>Security notice:</strong> An automated verdict is not a guarantee that a file is safe. Verify that the sandbox actually analyzed the uploaded file.</div>
+    </div>
+
+    <div class="rd-end">
+{#      <a href="{% url 'view_apk_reports' %}" class="rd-btn"><svg class="ic"><use href="#d-back"/></svg>Back to All Reports</a>#}
+    </div>
+
+  </div>
+</div>
+
+<script>
+function rdCopy(btn){
+  var t=document.getElementById('rdHash').textContent.trim(),l=btn.querySelector('span');
+  function done(){l.textContent='Copied';setTimeout(function(){l.textContent='Copy'},1800)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done)}
+  else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){}document.body.removeChild(a)}
+}
+</script>
+
+{% endblock %}

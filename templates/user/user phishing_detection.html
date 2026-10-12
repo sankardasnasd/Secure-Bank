@@ -1,0 +1,1319 @@
+{% extends 'bank/bank home sub.html' %}
+{% load l10n %}
+
+{% block body %}
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+.ph{
+    --blue-l:#e9f5fd;
+    --blue-m:#bfe0f7;
+    --blue:#2b8fd6;
+    --blue-d:#1d6aa5;
+    --green-l:#e3f7ec;
+    --green-m:#a9e5c3;
+    --green:#2e9e6b;
+    --red:#c0392b;
+    --red-l:#fdecea;
+    --red-m:#f3c3be;
+    --ink:#16324a;
+    --muted:#5d7388;
+    --line:#dbe9f2;
+    font-family:'Nunito Sans',system-ui,sans-serif;
+    color:var(--ink);
+    padding:30px 16px;
+    min-height:85vh;
+    background:linear-gradient(160deg,#f5f9fc,#fff 40%,#f1faf5)
+}
+
+.ph *{
+    box-sizing:border-box
+}
+
+.ph h2,
+.ph h3,
+.ph .hd{
+    font-family:'Manrope',system-ui,sans-serif
+}
+
+.ph-wrap{
+    max-width:920px;
+    margin:0 auto
+}
+
+/* ================= HEADER ================= */
+
+.ph-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:22px
+}
+
+.ph-ico{
+    width:50px;
+    height:50px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    background:var(--blue-l);
+    border:1px solid var(--blue-m);
+    flex:none
+}
+
+.ph-head h2{
+    margin:0;
+    font-size:1.5rem;
+    font-weight:800;
+    letter-spacing:-.01em
+}
+
+.ph-head p{
+    margin:3px 0 0;
+    font-size:.9rem;
+    color:var(--muted)
+}
+
+.ph-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 14px 36px rgba(29,106,165,.1)
+}
+
+/* ================= HERO ================= */
+
+.ph-hero{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:20px;
+    align-items:center;
+    padding:28px 32px;
+    background:linear-gradient(
+        120deg,
+        var(--blue-l),
+        #fff 55%,
+        var(--green-l)
+    );
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden
+}
+
+.ph-hero h3{
+    margin:0 0 8px;
+    font-size:1.35rem;
+    font-weight:800;
+    line-height:1.2
+}
+
+.ph-hero p{
+    margin:0;
+    color:var(--muted);
+    font-size:.93rem;
+    max-width:42ch
+}
+
+.ph-chips{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:14px
+}
+
+.ph-chips span{
+    font:700 .76rem 'Manrope',sans-serif;
+    padding:5px 12px;
+    border-radius:99px;
+    background:#fff;
+    border:1px solid var(--line);
+    color:var(--blue-d)
+}
+
+.ph-chips span:nth-child(2){
+    color:#17724b;
+    border-color:var(--green-m)
+}
+
+.ph-art{
+    width:100%;
+    max-width:300px;
+    justify-self:end
+}
+
+.ph-scan{
+    animation:phScan 3.2s ease-in-out infinite
+}
+
+@keyframes phScan{
+    0%,100%{
+        transform:translateY(0)
+    }
+
+    50%{
+        transform:translateY(118px)
+    }
+}
+
+.ph-lens{
+    animation:phFloat 4.5s ease-in-out infinite;
+    transform-origin:center
+}
+
+@keyframes phFloat{
+    50%{
+        transform:translate(-6px,-8px)
+    }
+}
+
+.ph-body{
+    padding:28px 32px 32px
+}
+
+/* ================= FORM ================= */
+
+.ph label.l{
+    display:block;
+    font:700 .86rem 'Manrope',sans-serif;
+    margin-bottom:8px
+}
+
+.ph-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap
+}
+
+.ph-row input{
+    flex:1;
+    min-width:240px;
+    height:50px;
+    border:1.5px solid var(--line);
+    border-radius:13px;
+    padding:0 16px;
+    font:inherit;
+    font-size:.95rem;
+    color:var(--ink);
+    background:#fff;
+    outline:0;
+    transition:border-color .2s,box-shadow .2s
+}
+
+.ph-row input:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px rgba(43,143,214,.15)
+}
+
+.ph-row input:user-invalid{
+    border-color:var(--red);
+    background:#fffafa
+}
+
+.ph-btn{
+    height:50px;
+    padding:0 28px;
+    border:0;
+    border-radius:13px;
+    background:var(--blue-d);
+    color:#fff;
+    font:800 .95rem 'Manrope',sans-serif;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    white-space:nowrap;
+    box-shadow:0 8px 20px rgba(29,106,165,.25);
+    transition:transform .2s
+}
+
+.ph-btn:hover{
+    transform:translateY(-2px)
+}
+
+.ph-btn:disabled{
+    opacity:.75;
+    cursor:wait;
+    transform:none
+}
+
+.ph-btn:focus-visible,
+.ph-row input:focus-visible{
+    outline:3px solid var(--blue);
+    outline-offset:2px
+}
+
+.ph-hint{
+    margin:8px 0 0;
+    font-size:.8rem;
+    color:#7d92a4
+}
+
+.ph-spin{
+    width:16px;
+    height:16px;
+    border:2.5px solid rgba(255,255,255,.4);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:phSpin .7s linear infinite;
+    display:none
+}
+
+.ph-btn.busy .ph-spin{
+    display:block
+}
+
+.ph-btn.busy .ph-go{
+    display:none
+}
+
+@keyframes phSpin{
+    to{
+        transform:rotate(360deg)
+    }
+}
+
+/* ================= ERROR ================= */
+
+.ph-error{
+    margin-top:20px;
+    padding:14px 16px;
+    background:var(--red-l);
+    border:1px solid var(--red-m);
+    border-radius:12px;
+    color:var(--red);
+    font-size:.9rem
+}
+
+/* ================= RESULT ================= */
+
+.ph-res{
+    margin-top:26px;
+    border-radius:18px;
+    padding:26px;
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:24px;
+    align-items:start;
+    animation:phIn .5s
+}
+
+@keyframes phIn{
+    from{
+        opacity:0;
+        transform:translateY(14px)
+    }
+}
+
+.ph-res.bad{
+    background:var(--red-l);
+    border:1px solid var(--red-m)
+}
+
+.ph-res.ok{
+    background:var(--green-l);
+    border:1px solid var(--green-m)
+}
+
+.ph-res svg.big{
+    width:130px;
+    margin:0 auto;
+    display:block
+}
+
+.ph-res.bad svg.big{
+    animation:phShake 1.4s ease 2
+}
+
+@keyframes phShake{
+    0%,100%{
+        transform:rotate(0)
+    }
+
+    20%{
+        transform:rotate(-6deg)
+    }
+
+    40%{
+        transform:rotate(6deg)
+    }
+
+    60%{
+        transform:rotate(-4deg)
+    }
+
+    80%{
+        transform:rotate(4deg)
+    }
+}
+
+.ph-tick{
+    stroke-dasharray:40;
+    stroke-dashoffset:40;
+    animation:phTick 1s .2s ease forwards
+}
+
+@keyframes phTick{
+    to{
+        stroke-dashoffset:0
+    }
+}
+
+.ph-verdict{
+    font:800 1.6rem 'Manrope',sans-serif;
+    line-height:1.1
+}
+
+.ph-res.bad .ph-verdict{
+    color:var(--red)
+}
+
+.ph-res.ok .ph-verdict{
+    color:#17724b
+}
+
+.ph-vsub{
+    margin:6px 0 18px;
+    color:var(--muted);
+    font-size:.92rem
+}
+
+.ph-lab{
+    font:700 .74rem 'Manrope',sans-serif;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px
+}
+
+.ph-url{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:11px;
+    padding:11px 14px;
+    font-size:.9rem;
+    word-break:break-all;
+    margin-bottom:18px
+}
+
+.ph-meter{
+    margin-bottom:14px
+}
+
+.ph-meter div{
+    display:flex;
+    justify-content:space-between;
+    font-size:.86rem;
+    margin-bottom:6px
+}
+
+.ph-meter p{
+    margin:0;
+    height:10px;
+    border-radius:10px;
+    background:#fff;
+    overflow:hidden;
+    border:1px solid var(--line)
+}
+
+.ph-meter i{
+    display:block;
+    height:100%;
+    border-radius:10px;
+    animation:phWide 1.1s ease
+}
+
+@keyframes phWide{
+    from{
+        width:0!important
+    }
+}
+
+.ph-note{
+    margin-top:18px;
+    padding:13px 15px;
+    border-radius:11px;
+    background:#fff;
+    font-size:.84rem;
+    line-height:1.55
+}
+
+.ph-res.bad .ph-note{
+    border:1px solid var(--red-m);
+    color:var(--red)
+}
+
+.ph-res.ok .ph-note{
+    border:1px solid var(--green-m);
+    color:#17724b
+}
+
+/* ================= HOW IT WORKS ================= */
+
+.ph-how{
+    margin-top:28px;
+    padding-top:24px;
+    border-top:1px solid var(--line)
+}
+
+.ph-how h3{
+    margin:0 0 14px;
+    font-size:1.02rem;
+    font-weight:800
+}
+
+.ph-steps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    list-style:none;
+    margin:0;
+    padding:0
+}
+
+.ph-steps li{
+    background:#f9fcfe;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    font-size:.86rem;
+    color:var(--muted)
+}
+
+.ph-steps svg{
+    width:42px;
+    height:42px;
+    margin-bottom:8px
+}
+
+.ph-steps b{
+    display:block;
+    color:var(--ink);
+    font:800 .92rem 'Manrope',sans-serif;
+    margin-bottom:3px
+}
+
+.ph-tips{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:14px;
+    background:linear-gradient(
+        120deg,
+        var(--blue-l),
+        var(--green-l)
+    );
+    font-size:.86rem;
+    line-height:1.6
+}
+
+.ph-tips b{
+    font-family:'Manrope',sans-serif
+}
+
+.ph-tips ul{
+    margin:6px 0 0;
+    padding-left:18px
+}
+
+.ph-foot{
+    text-align:center;
+    margin-top:22px;
+    color:var(--muted);
+    font-size:.82rem
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:760px){
+
+    .ph-hero{
+        grid-template-columns:1fr;
+        padding:22px
+    }
+
+    .ph-art{
+        justify-self:center;
+        max-width:240px;
+        order:-1
+    }
+
+    .ph-body{
+        padding:22px
+    }
+
+    .ph-res{
+        grid-template-columns:1fr;
+        padding:20px
+    }
+
+    .ph-steps{
+        grid-template-columns:1fr
+    }
+
+    .ph-btn{
+        width:100%;
+        justify-content:center
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+    .ph *{
+        animation:none!important;
+        transition:none!important
+    }
+
+    .ph-tick{
+        stroke-dashoffset:0
+    }
+}
+</style>
+
+
+<div class="ph">
+
+    <div class="ph-wrap">
+
+        <!-- ================= HEADER ================= -->
+
+        <div class="ph-head">
+
+            <div class="ph-ico">
+
+                <svg width="26"
+                     height="26"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="#1d6aa5"
+                     stroke-width="1.9"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+
+                    <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>
+
+                    <path d="M12 9v4M12 16h.01"/>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h2>Phishing URL Detection</h2>
+
+                <p>
+                    Enter a website link and SecureBank's
+                    machine learning model will analyse it.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="ph-card">
+
+            <!-- ================= HERO ================= -->
+
+            <div class="ph-hero">
+
+                <div>
+
+                    <h3>Think before you click.</h3>
+
+                    <p>
+                        Fake bank websites steal passwords, card details
+                        and OTPs. Paste any link you received by SMS,
+                        email or a transaction note and check it first.
+                    </p>
+
+                    <div class="ph-chips">
+
+                        <span>Machine learning</span>
+                        <span>Instant result</span>
+                        <span>SecureBank</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Illustration -->
+
+                <svg class="ph-art"
+                     viewBox="0 0 320 230"
+                     aria-hidden="true">
+
+                    <defs>
+
+                        <clipPath id="phClip">
+
+                            <rect x="20"
+                                  y="58"
+                                  width="236"
+                                  height="136"/>
+
+                        </clipPath>
+
+                    </defs>
+
+
+                    <rect x="20"
+                          y="24"
+                          width="236"
+                          height="170"
+                          rx="14"
+                          fill="#fff"
+                          stroke="#bfe0f7"
+                          stroke-width="2.5"/>
+
+
+                    <path d="M20 58V38a14 14 0 0 1 14-14h208a14 14 0 0 1 14 14v20z"
+                          fill="#e9f5fd"/>
+
+
+                    <circle cx="38"
+                            cy="41"
+                            r="4.5"
+                            fill="#e5566a"/>
+
+                    <circle cx="53"
+                            cy="41"
+                            r="4.5"
+                            fill="#e8a317"/>
+
+                    <circle cx="68"
+                            cy="41"
+                            r="4.5"
+                            fill="#2e9e6b"/>
+
+
+                    <rect x="84"
+                          y="32"
+                          width="160"
+                          height="18"
+                          rx="9"
+                          fill="#fff"
+                          stroke="#dbe9f2"/>
+
+
+                    <text x="96"
+                          y="45"
+                          font-family="sans-serif"
+                          font-size="9.5"
+                          fill="#5d7388">
+                        https://secure-bank-login.xyz
+                    </text>
+
+
+                    <rect x="40"
+                          y="76"
+                          width="110"
+                          height="10"
+                          rx="5"
+                          fill="#dbe9f2"/>
+
+                    <rect x="40"
+                          y="96"
+                          width="170"
+                          height="8"
+                          rx="4"
+                          fill="#e9f5fd"/>
+
+                    <rect x="40"
+                          y="112"
+                          width="150"
+                          height="8"
+                          rx="4"
+                          fill="#e9f5fd"/>
+
+                    <rect x="40"
+                          y="132"
+                          width="100"
+                          height="26"
+                          rx="8"
+                          fill="#bfe0f7"/>
+
+                    <rect x="40"
+                          y="168"
+                          width="130"
+                          height="8"
+                          rx="4"
+                          fill="#e9f5fd"/>
+
+
+                    <g clip-path="url(#phClip)">
+
+                        <rect class="ph-scan"
+                              x="20"
+                              y="58"
+                              width="236"
+                              height="4"
+                              fill="#2e9e6b"
+                              opacity=".85"/>
+
+                    </g>
+
+
+                    <g class="ph-lens">
+
+                        <circle cx="228"
+                                cy="140"
+                                r="36"
+                                fill="#fff"
+                                fill-opacity=".72"
+                                stroke="#1d6aa5"
+                                stroke-width="7"/>
+
+                        <path d="M254 166 288 202"
+                              stroke="#1d6aa5"
+                              stroke-width="11"
+                              stroke-linecap="round"/>
+
+                        <path d="M212 141l11 11 20-23"
+                              stroke="#2e9e6b"
+                              stroke-width="7"
+                              fill="none"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"/>
+
+                    </g>
+
+                </svg>
+
+            </div>
+
+
+            <div class="ph-body">
+
+                <!-- ================= FORM ================= -->
+
+                <form method="POST"
+                      action="{% url 'phishing_detection' %}"
+                      id="phForm">
+
+                    {% csrf_token %}
+
+                    <label class="l"
+                           for="phUrl">
+                        Enter URL
+                    </label>
+
+
+                    <div class="ph-row">
+
+                        <input type="url"
+                               id="phUrl"
+                               name="url"
+                               value="{% if url %}{{ url }}{% endif %}"
+                               placeholder="https://example.com"
+                               required
+                               maxlength="2000"
+                               autocomplete="off"
+                               inputmode="url">
+
+
+                        <button type="submit"
+                                class="ph-btn"
+                                id="phBtn">
+
+                            <svg class="ph-go"
+                                 width="17"
+                                 height="17"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2.3"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+
+                                <circle cx="11"
+                                        cy="11"
+                                        r="8"/>
+
+                                <line x1="21"
+                                      y1="21"
+                                      x2="16.65"
+                                      y2="16.65"/>
+
+                            </svg>
+
+
+                            <span class="ph-spin"
+                                  aria-hidden="true">
+                            </span>
+
+
+                            <span id="phTxt">
+                                Check URL
+                            </span>
+
+                        </button>
+
+                    </div>
+
+
+                    <p class="ph-hint">
+                        Include the full address, starting with
+                        http:// or https://
+                    </p>
+
+                </form>
+
+
+                <!-- ================= ERROR ================= -->
+
+                {% if error %}
+
+                <div class="ph-error"
+                     role="alert">
+
+                    <strong>Error:</strong>
+                    {{ error }}
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =====================================================
+                     PHISHING RESULT
+                     ===================================================== -->
+
+                {% if result == "PHISHING" %}
+
+                <div class="ph-res bad"
+                     role="status"
+                     aria-live="polite">
+
+
+                    <svg class="big"
+                         viewBox="0 0 104 120"
+                         aria-hidden="true">
+
+                        <path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z"
+                              fill="#c0392b"/>
+
+                        <path d="M52 36v34"
+                              stroke="#fff"
+                              stroke-width="9"
+                              stroke-linecap="round"/>
+
+                        <circle cx="52"
+                                cy="88"
+                                r="6"
+                                fill="#fff"/>
+
+                    </svg>
+
+
+                    <div>
+
+                        <div class="ph-verdict">
+                            PHISHING URL
+                        </div>
+
+
+                        <p class="ph-vsub">
+                            SecureBank's ML model classified this
+                            URL as potentially phishing.
+                        </p>
+
+
+                        <div class="ph-lab">
+                            Checked URL
+                        </div>
+
+
+                        <div class="ph-url">
+                            {{ url }}
+                        </div>
+
+
+                        <!-- Phishing probability -->
+
+                        <div class="ph-meter">
+
+                            <div>
+
+                                <span>
+                                    Phishing probability
+                                </span>
+
+                                <strong style="color:var(--red)">
+                                    {{ phishing_probability|floatformat:2 }}%
+                                </strong>
+
+                            </div>
+
+
+                            <p>
+
+                                <i style="width:{{ phishing_probability|unlocalize }}%;background:var(--red)">
+                                </i>
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Legitimate probability -->
+
+                        <div class="ph-meter">
+
+                            <div>
+
+                                <span>
+                                    Legitimate probability
+                                </span>
+
+                                <strong style="color:var(--green)">
+                                    {{ legitimate_probability|floatformat:2 }}%
+                                </strong>
+
+                            </div>
+
+
+                            <p>
+
+                                <i style="width:{{ legitimate_probability|unlocalize }}%;background:var(--green)">
+                                </i>
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="ph-note">
+
+                            <strong>
+                                Security notice:
+                            </strong>
+
+                            Do not enter passwords, banking details,
+                            OTPs or other sensitive information on
+                            suspicious websites. Do not open the link,
+                            and report it to your bank.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =====================================================
+                     LEGITIMATE RESULT
+                     ===================================================== -->
+
+                {% if result == "LEGITIMATE" %}
+
+                <div class="ph-res ok"
+                     role="status"
+                     aria-live="polite">
+
+
+                    <svg class="big"
+                         viewBox="0 0 104 120"
+                         aria-hidden="true">
+
+                        <path d="M52 4 8 22v32c0 30 20 50 44 60 24-10 44-30 44-60V22z"
+                              fill="#2e9e6b"/>
+
+
+                        <path class="ph-tick"
+                              d="m32 58 14 14 26-30"
+                              stroke="#fff"
+                              stroke-width="8"
+                              fill="none"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"/>
+
+                    </svg>
+
+
+                    <div>
+
+                        <div class="ph-verdict">
+                            LEGITIMATE URL
+                        </div>
+
+
+                        <p class="ph-vsub">
+                            SecureBank's ML model classified
+                            this URL as legitimate.
+                        </p>
+
+
+                        <div class="ph-lab">
+                            Checked URL
+                        </div>
+
+
+                        <div class="ph-url">
+                            {{ url }}
+                        </div>
+
+
+                        <!-- Legitimate probability -->
+
+                        <div class="ph-meter">
+
+                            <div>
+
+                                <span>
+                                    Legitimate probability
+                                </span>
+
+                                <strong style="color:var(--green)">
+                                    {{ legitimate_probability|floatformat:2 }}%
+                                </strong>
+
+                            </div>
+
+
+                            <p>
+
+                                <i style="width:{{ legitimate_probability|unlocalize }}%;background:var(--green)">
+                                </i>
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Phishing probability -->
+
+                        <div class="ph-meter">
+
+                            <div>
+
+                                <span>
+                                    Phishing probability
+                                </span>
+
+                                <strong style="color:var(--red)">
+                                    {{ phishing_probability|floatformat:2 }}%
+                                </strong>
+
+                            </div>
+
+
+                            <p>
+
+                                <i style="width:{{ phishing_probability|unlocalize }}%;background:var(--red)">
+                                </i>
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="ph-note">
+
+                            <strong>
+                                Note:
+                            </strong>
+
+                            This is the ML model's classification.
+                            It is not a guarantee that a website is
+                            completely safe, so stay careful with
+                            sensitive details.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- ================= HOW IT WORKS ================= -->
+
+                <div class="ph-how">
+
+                    <h3>
+                        How SecureBank checks a link
+                    </h3>
+
+
+                    <ol class="ph-steps">
+
+                        <li>
+
+                            <svg viewBox="0 0 42 42"
+                                 aria-hidden="true">
+
+                                <circle cx="21"
+                                        cy="21"
+                                        r="21"
+                                        fill="#e9f5fd"/>
+
+                                <path d="M18 24a5 5 0 0 0 7 0l4-4a5 5 0 0 0-7-7l-1 1M24 18a5 5 0 0 0-7 0l-4 4a5 5 0 0 0 7 7l1-1"
+                                      fill="none"
+                                      stroke="#1d6aa5"
+                                      stroke-width="2.4"
+                                      stroke-linecap="round"/>
+
+                            </svg>
+
+
+                            <b>
+                                1. Link is read
+                            </b>
+
+                            The URL is turned into numbers,
+                            such as its length, symbols and
+                            domain details.
+
+                        </li>
+
+
+                        <li>
+
+                            <svg viewBox="0 0 42 42"
+                                 aria-hidden="true">
+
+                                <circle cx="21"
+                                        cy="21"
+                                        r="21"
+                                        fill="#e3f7ec"/>
+
+                                <path d="M11 29V20M18 29V13M25 29V23M32 29V16"
+                                      stroke="#2e9e6b"
+                                      stroke-width="3.2"
+                                      stroke-linecap="round"/>
+
+                            </svg>
+
+
+                            <b>
+                                2. Model analyses it
+                            </b>
+
+                            A trained Random Forest model
+                            studies those URL features.
+
+                        </li>
+
+
+                        <li>
+
+                            <svg viewBox="0 0 42 42"
+                                 aria-hidden="true">
+
+                                <circle cx="21"
+                                        cy="21"
+                                        r="21"
+                                        fill="#e9f5fd"/>
+
+                                <path d="M21 9 12 13v7c0 6 4 10 9 12 5-2 9-6 9-12v-7z"
+                                      fill="#2b8fd6"/>
+
+                                <path d="m16.5 21 3.5 3.5 6-7"
+                                      stroke="#fff"
+                                      stroke-width="2.4"
+                                      fill="none"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+
+                            </svg>
+
+
+                            <b>
+                                3. You get the verdict
+                            </b>
+
+                            SecureBank shows phishing or
+                            legitimate, with the probability.
+
+                        </li>
+
+                    </ol>
+
+
+                    <div class="ph-tips">
+
+                        <b>
+                            Stay safe online
+                        </b>
+
+
+                        <ul>
+
+                            <li>
+                                Banks never ask for your password
+                                or OTP by SMS, email or phone.
+                            </li>
+
+                            <li>
+                                Check the spelling of the address
+                                before you log in.
+                            </li>
+
+                            <li>
+                                When in doubt, type the bank's
+                                address yourself instead of
+                                tapping a link.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="ph-foot">
+
+            SecureBank &copy; {% now "Y" %}
+            · Safe banking, watched around the clock
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("phForm");
+    const button = document.getElementById("phBtn");
+    const text = document.getElementById("phTxt");
+
+    if (!form || !button || !text) {
+        return;
+    }
+
+    form.addEventListener("submit", function () {
+
+        if (form.checkValidity()) {
+
+            button.classList.add("busy");
+
+            button.disabled = true;
+
+            text.textContent = "Scanning...";
+
+        }
+
+    });
+
+});
+
+</script>
+
+{% endblock %}
